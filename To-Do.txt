@@ -1,34 +1,68 @@
+Role: Expert Quantitative Developer & PyTorch EngineerTask:实现 100 节点 ST-GCN 金融预测模型，集成时空特征提取、物理聚类感知和量化训练策略。
+1. Data Loading & Leakage Prevention  Chronological Split: 训练集 (2019-2023), 验证集 (2024 H1), 测试集 (2024 H2)。严禁跨区 Shuffle。  
+Scaling: 所有的 StandardScaler 必须仅在 Train Set 上 fit，然后 transform 到全集。  
+Target: 加载 target_vector.npy 中的 $\Delta PC1$ 作为预测目标。 
+2. Model Architecture (ST-GCN)Structure: 堆叠 2 个 ST-Conv Blocks。
+每个 Block 包含：Temporal Layer: Gated 1D Convolution (Capture time patterns).Spatial Layer: Sparse GCN (Using the normalized adjacency matrix $\tilde{A}$).Pooling: 在 865 个节点输出后，使用 Attention Pooling 自动加权各节点贡献，最后通过两层 MLP 输出 3 维 PCA 预测值。Residuals: 确保每个 Block 都有残差连接。
+3. Training & Optimization Strategy  Loss Function: 实现 HybridLoss = MSE(pred, true) + 0.1 * L1(pred, true)。  Scheduler: 采用 Cosine Annealing with Warmup (Warmup: 5 epochs, Max LR: 1e-3, Min: 1e-6)。  Early Stopping: 设置 patience=15，监控 Validation Loss。  Mixed Precision: 使用 torch.cuda.amp 开启混合精度训练。
+4. Memory Management (RTX 5070 Ti Optimized)  ClusterGCN Interface: 实现一个开关函数，若 OOM=True，则每批次随机采样 3 个 physical_cluster 的子图进行训练。  Sparse Operations: 所有的图卷积必须基于 torch.sparse.mm 进行。
+5. Evaluation Baseline  Naive Baseline: 计算“全零预测”的 MSE（即 $\Delta PC1$ 的方差）。  Success Metric: 模型测试集 MSE 必须比 Naive Baseline 降低至少 5%。  Deliverable:请提供完整的 PyTorch 代码，包含 Dataset 类、STGCN 模型类、HybridLoss 实现以及 train_loop 脚本。
+给你的最后建议关于 Baseline 的心态： 金融预测非常困难。如果你的模型能比“预测 0”好 5% 以上，在量化领域已经是非常显著的信号了。  
+显存监控： 第一次运行模型前，让 Agent 打印出 model_summary。标准化验证： 务必检查你的 $\Delta PC1$ 是否已经做了标准化。如果没有，在计算 Hybrid Loss 时，L1 项的权重 $\lambda=0.1$ 可能需要微调。
+
+
+Role: Senior Quantitative Developer & AI Research EngineerObjective:Implement a Spatio-Temporal Graph Convolutional Network (ST-GCN) to predict renewable energy stock market fluctuations (via PCA components) using a graph of 100 wind farm nodes. The solution must handle high-dimensional spatial data, hourly weather/power signals, and daily financial targets while strictly avoiding data leakage and optimizing for 12GB VRAM.  
+1. Data Engineering & IntegrityChronological Split: Divide the dataset into Train (2019–2023), Validation (2024 H1), and Test (2024 H2).  
+Zero Leakage Policy:Strictly NO random shuffling across the time dimension.  Fit all scalers (StandardScaler/MinMaxScaler) only on the training set before transforming the validation and test sets.  Target Vector: Use the first-differenced PCA component provided in target_vector.npy: $\Delta PC1 = PC1(t+24) - PC1(t)$.  Input Tensors: Integrate 100 nodes with features: Meteorological (5), Regional Power Price (1), Global Financial PCA (3), Node Capacity (1), and Spatial Lat/Lon (2).
+2. Neural Network Architecture (ST-GCN)ST-Conv Block: Stack 2-3 blocks, each containing:Temporal Layer: 1D Gated Convolutional Layer (GLU) to capture time-series dependencies across the 168-hour window.Spatial Layer: Graph Convolutional Layer using a pre-computed Sparse Normalized Adjacency Matrix ($\tilde{A} = D^{-1/2}AD^{-1/2}$).
+Graph Operations: Use torch.sparse.mm for all graph convolutions to minimize VRAM overhead for the 865-node graph.Readout Layer: Apply Attention Pooling across the node dimension to aggregate the 100 nodes into a single feature vector, followed by an MLP to output the 3-dimensional PCA prediction.
+3. Quantitative Training StrategyHybrid Loss Function: Implement Loss = MSE(pred, true) + 0.1 * L1(pred, true) to ensure robustness against financial "fat tails" and outliers.  Optimization:Optimizer: AdamW with weight decay.Scheduler: Cosine Annealing with a 5-epoch Warmup (Start: 1e-3, Min: 1e-6).  Regularization: Use Dropout (p=0.3) and Early Stopping with patience=15 based on validation loss.  
+4. VRAM & Scalability OptimizationMixed Precision: Use torch.cuda.amp (autocast) for FP16 training on the 5070 Ti.ClusterGCN Sampling: Implement an optional sub-graph sampling strategy. If activated, sample 2-3 physical clusters (~50 nodes) per mini-batch to reduce memory complexity from $O(N^2)$ to $O(|cluster|^2)$.  
+5. Evaluation & BenchmarkingNaive Baseline: Compare model performance against a "Zero-Change" prediction (predicting 0 for $\Delta PC1$). The baseline MSE equals the variance of the target.  Success Criteria: The model must outperform the Naive Baseline by at least 5% on the test set to be considered valid.  Deliverable Code Structure:Dataset class with sliding window logic ($T=168, \text{stride}=6$).STGCNModel class with Sparse Matrix support and Attention Pooling.HybridLoss implementation.Trainer script with chronological split and memory monitoring.
+
+先跑小样： 先用 (Batch=2, Time=24, Nodes=10) 的随机数据跑通一次 forward 和 backward，确认逻辑无误再更新GitHub.
+
+
 大纲：
-Prompt: 多模态时空特征张量集成与数据加载器构建任务目标（实际时间序列过大，处理会有压力。你可以先测试短时间（如500个时间步）先确保代码跑通）：
+Prompt: 多模态时空特征张量集成与数据加载器构建任务目标。当前任务只是数据预处理，不用开始训练。指令中关于训练的部分可以先总结出来后面使用。
 请编写一个 Python 脚本，将气象、电力、金融和节点元数据集成一个适合 ST-GCN 训练的高维张量，并构建高效的 Data Loader。
 1. 输入数据准备：
-nodes_df: 包含 physical_cluster, latitude, longitude, capacity_m, country。
-
+processed_nodes.csv: 包含 physical_cluster, latitude, longitude, capacity_mw, country。
+*_top100_2019-01-01_2024-12-31.csv: 包含price(电价)，ssr,t2m,u100,v100
 finance_pca_np: 形状为 (52585, 3) 的全局股票主成分数据。
+添加特征“is_market_open” 股票数据只有日数据。气象和电力是 24/7 连续波动的物理世界，而股票是 5/7 间断运行的社会世界。
+操作： 在特征向量中保留 is_market_open（0/1）。
+逻辑： 当 is_market_open=0 时，虽然股票价格使用 ffill（前向填充）保持不变，
+AI 会学习到：此时的电价和风速波动不直接导致股价变动，而是作为“能量”累积，直到 is_market_open=1 的瞬间爆发。
 2. 核心处理逻辑：特征工程：
+气象特征 (ssr, t2m, u100,v100)方法： 全局 Z-score。细节： 建议计算 所有节点、所有时间步 的总均值和标准差。原因： 如果你对每个节点单独标准化，模型就失去了“地理差异感”。例如，苏格兰的风本来就比德国大，全局标准化能保留这种“空间强度差异”，这对 ST-GCN 学习空间传播逻辑至关重要。
+电力价格 (Electricity Price) —— 进阶建议：RobustScaler挑战： 2022 年欧洲电价曾暴涨到 500 欧元/MWh 以上，而平时仅 50 欧元。尝试 RobustScaler（使用中位数和四分位间距 IQR 进行缩放）。它对异常值更鲁棒，能更好地保留价格波动的结构。根据 processed_nodes['country'] 将对应国家的电价填充到每个节点的特征中。
+金融特征 (Global Stock PCA)方法： 独立 Z-score。细节： 由于你已经做了 PCA（主成分分析），PCA 的输出通常已经是中心化的。但为了保险，依然建议对 PCA 后的 3 个维度分别进行 Z-score，确保它们的方差一致。将 finance_pca_np 广播（Broadcast）至所有 100 个节点。
+市场开关 (is_market_open)方法： 不进行标准化。细节： 保持 0 和 1 即可。标准化会让它变成 -0.5 和 1.5 之类的无意义数字。
 对 capacity_m 进行 $\log(x + 1)$ 处理后执行 Z-score。
 对经纬度进行 Min-Max 归一化。
-将 finance_pca_np 广播（Broadcast）至所有 865 个节点。
-根据 nodes_df['country'] 将对应国家的电价填充到每个节点的特征中。
-添加时间周期特征：使用 $\sin(2\pi \cdot \text{hour}/24)$ 和 $\cos(2\pi \cdot \text{hour}/24)$。
-张量拼接： 最终合成形状为 (Total_Time, 865, F) 的主特征矩阵。
-邻接矩阵构建：创建一个 $865 \times 865$ 的稀疏矩阵。
-同簇节点（physical_cluster 一致）权重设为 1.0。
-非同簇节点但距离在 100km 内的，按距离衰减计算权重。
-使用 scipy.sparse.csr_matrix 保存以节省内存。
+添加时间日周期特征：使用 $\sin(2\pi \cdot \text{hour}/24)$ 和 $\cos(2\pi \cdot \text{hour}/24)$。
+添加时间月周期特征。
+张量拼接： 最终合成形状为 (Total_Time, 100, F) 的主特征矩阵。
+邻接矩阵已构建：adjacency_matrix.pt adjacency_matrix.npz
 滑动窗口 Dataset：使用 PyTorch Dataset 封装。window_size = 168 (7天), stride = 6。
+时间泄露 (Data Leakage)在使用滑动窗口切分训练集和测试集时，千万不要在切分之后再进行 Shuffle（随机打乱）！正确做法： 先按时间线截断（2019-2023 归训练，2024 归测试）。然后： 分别在训练集内部和测试集内部进行窗口滑动。原因： 如果你先滑动再随机切分，训练集里可能包含“今天”的数据，而测试集里包含“昨天”的数据，模型会因为“偷看了未来”而跑出虚高的准确率，但在实盘中会一塌糊涂。
+
 X: 过去 168 小时的特征；y: 未来第 24 小时的 Global Stock PC1 变化率。
 3. 显存优化要求 (RTX 5070 Ti 12GB)：
 使用 numpy.memmap 或 torch.utils.data.IterableDataset 如果内存不足。
-簇级采样 (ClusterGCN / Subgraph Sampling) 
-改善逻辑： 如果 865 个点跑不动，聚类后你可以采用 ClusterGCN 策略。每次只抽取 2-3 个簇（比如 200 个点）进行一次训练步。
 确保 y 标签的计算不产生数据泄露（不要在滑动窗口中包含未来信息）。
 提供一个 check_vram_usage() 函数，估算单次 Batch (size=16) 下的显存占用。
-4. 输出结果：返回 train_loader, val_loader, test_loader 以及 adjacency_matrix (Tensor)。
+4. 输出结果：返回 train_loader, val_loader, test_loader 。
 训练前的温馨提示Target 的平稳性： 在预测股票 PCA 时，建议预测 $\Delta PCA$ (一阶差分)。
 因为 PCA 绝对值可能具有趋势性，不利于模型收敛。
 损失函数建议： 考虑到金融数据的厚尾效应，建议在代码中使用：$$ \text{Loss} = \text{MSE}(y_{pred}, y_{true}) + \lambda \cdot \text{L1}(y_{pred}, y_{true}) $$（混合 MSE 和 L1 损失，增加模型抗噪能力）。
-邻接矩阵验证： 在训练前，让 Agent 画出邻接矩阵的稀疏结构图（Heatmap），直观检查是否形成了明显的“簇状”连接。
+
+
+簇级采样 (ClusterGCN / Subgraph Sampling) 
+改善逻辑： 如果 100 个点跑不动，聚类后你可以采用 ClusterGCN 策略。每次只抽取 2-3 个簇（比如 50个点）进行一次训练步。
+不用实际跑代码，完成后我会在自己的5070ti上跑，不过为了确保代码可行，你可以做一些测试
+
 
 邻接矩阵构建脚本（已完成）：
 根据已有的 100个节点元数据（包含经纬度和聚类 ID），构建一个用于 ST-GCN 的稀疏邻接矩阵 $A$。1. 输入需求：读取 processed_nodes.csv，包含列：latitude, longitude, physical_cluster。设定参数 dist_threshold = 150.0 (km)，sigma = 50.0 (用于距离衰减)。2. 构建逻辑：初始化： 创建一个形状为 $(865, 865)$ 的全零矩阵。Haversine 距离计算： 计算所有节点对之间的地理距离（单位：km）。权重分配：Rule 1 (Intra): 如果 node_i 和 node_j 属于同一个 physical_cluster，设置 $w_{ij} = 1.0$。Rule 2 (Inter): 如果不属于同一簇，且 $d_{ij} < dist\_threshold$，设置 $w_{ij} = \exp(-d_{ij} / sigma)$。Rule 3 (Self-loop): 对角线元素 $w_{ii}$ 统一设为 $1.0$。稀疏化处理： 将权重小于 $0.1$ 的值强制设为 $0$，以增加稀疏度。3. 拉普拉斯归一化 (Laplacian Normalization)：计算度矩阵 $D$（每行的权重和）。执行 $\tilde{A} = D^{-1/2} \cdot A \cdot D^{-1/2}$。注意数值稳定性： 计算 $D^{-1/2}$ 时，若度数为 0，请将其处理为 0 以避免除以零错误。4. 代码实现要求：优先使用 scipy.sparse 进行矩阵运算。最终输出两个版本：一个是 scipy.sparse.csr_matrix 格式保存为 .npz；另一个是转换为 torch.sparse_coo_tensor 供模型直接调用。可视化： 请绘制邻接矩阵的稀疏热力图（Heatmap），直观展示簇内和簇间的连接密度。
