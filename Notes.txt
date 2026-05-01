@@ -1,4 +1,4 @@
-我的模型
+我的模型 EU_Electric_Atm_ML
 
 0.数据来源？
 气象数据 ERA5 金融数据 Yahoo 电力数据 ENTSO-E 
