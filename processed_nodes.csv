@@ -1,866 +1,101 @@
 name,country,latitude,longitude,capacity_mw,physical_cluster
-Aspiravi Wuustwezel,BEL,51.2488,3.2166,22.1,0
-Belwind Phase 1,BEL,51.66,2.8,171.0,0
-Froidchapelle Wind,BEL,50.2233,4.32,25.0,1
-HERDERSBRUG WIND,BEL,51.2622,3.2132,3.0,0
-Northwind,BEL,51.6186,2.8998,216.0,0
-RODENHUIZE WIND,BEL,51.1357,3.7878,4.5,0
-SCHELLE WIND,BEL,51.1265,4.3226,4.5,0
-Thorntonbank - C-Power - Area NE,BEL,51.556,2.9689,147.6,0
-Thorntonbank - C-Power - Area SW,BEL,51.54,2.921,177.6,0
-WM Park Powerport Zeebrugge,BEL,51.329,3.1819,12.0,0
-Windvision Estinnes WIND,BEL,50.4116,4.0804,80.0,1
-ZEEBRUGGE WIND,BEL,51.3596,3.2219,12.0,0
-Anholt,DNK,56.603,11.209,399.6,2
-Avedore Holme,DNK,55.6022,12.4611,11.0,2
-Draeby Fed,DNK,55.4503,10.5215,9.2,2
-Frederikshavn,DNK,57.4438,10.5621,8.0,10
-Hagesholm,DNK,55.7606,11.5615,23.0,2
-Hollandsbjerg,DNK,56.4845,10.2489,16.5,2
-Horns Rev A,DNK,55.5297,7.9062,160.0,0
-Horns Rev B,DNK,55.6,7.5825,209.3,0
-Klim Fjordholme,DNK,57.0599,9.1563,67.2,11
-Middelgrunden,DNK,55.6908,12.6703,20.0,2
-NÃ¸rre Ã˜kse SÃ¸,DNK,57.1252,9.5452,17.3,12
-Rejsby Hede,DNK,55.0373,8.6666,23.4,0
-Roedsand 1,DNK,54.54,11.715,165.6,2
-Roedsand 2,DNK,54.5228,11.5447,207.0,2
-Ronland 1,DNK,56.663,8.2202,17.0,13
-Samso,DNK,55.72,10.5801,23.0,2
-Sprogo,DNK,55.3436,10.9603,21.0,2
-Tuno Knob,DNK,55.9694,10.3556,5.0,2
-Vindeby,DNK,54.97,11.1301,5.0,2
-Ablaincourt-Pressoir,FRA,49.8414,2.8247,14.35,1
-Ablainzevelle,FRA,50.1529,2.741,10.0,1
-Achiet-le-Grand,FRA,50.1327,2.7791,18.0,1
-Adriers,FRA,46.2644,0.7899,10.0,1
-Agenville,FRA,50.1715,2.1079,6.0,1
-Airaines,FRA,49.972,1.9449,12.0,1
-Airan,FRA,49.0948,-0.146,8.0,1
-Allaire,FRA,47.6396,-2.1774,8.2,1
-Allanche,FRA,45.2312,2.9535,24.0,3
-Allery,FRA,49.9596,1.8856,4.6,1
-Allibaudières,FRA,48.6071,4.1483,35.0,1
-Allondrelle-la-Malmaison,FRA,49.5112,5.5684,10.76,1
-Allonnes,FRA,48.3407,1.676,52.275,1
-Alluyes,FRA,48.229,1.3648,12.0,1
-Ally,FRA,45.1733,3.3009,31.5,3
-Amanty,FRA,48.5156,5.605,12.3,1
-Ambon,FRA,47.5576,-2.5395,10.02,1
-Ambonville,FRA,48.3139,5.0106,10.0,1
-Ambricourt,FRA,50.4662,2.1709,4.0,1
-Amelécourt,FRA,48.8406,6.4881,12.0,1
-Anoux,FRA,49.2733,5.8648,10.25,1
-Ansauvillers,FRA,49.567,2.3874,11.5,1
-Anse-Bertrand,FRA,16.4653,-61.4621,3.025,4
-Antoigné,FRA,47.0785,-0.1322,8.0,1
-Arconcey,FRA,47.216,4.4614,12.0,1
-Ardin,FRA,46.4813,-0.555,9.0,1
-Ardouval,FRA,49.7414,1.2723,12.0,1
-Arfons,FRA,43.4241,2.1895,22.0,3
-Artemps,FRA,49.7615,3.1974,10.12,1
-Assac,FRA,43.9786,2.4342,20.0,3
-Assigny,FRA,49.9828,1.287,12.0,1
-Aubigny,FRA,48.914,-0.2155,10.5,1
-Audrieu,FRA,49.2046,-0.6043,9.2,1
-Aumelas,FRA,43.5319,3.6133,36.0,3
-Aussac-Vadalle,FRA,45.8219,0.2157,8.0,1
-Autremencourt,FRA,49.7049,3.7939,14.5,1
-Avant-lès-Marcilly,FRA,48.4324,3.5599,10.0,1
-Avesnes-en-Bray,FRA,49.473,1.6756,12.0,1
-Avignonet-Lauragais,FRA,43.3771,1.7729,12.6,3
-Ayssènes,FRA,44.0922,2.7661,12.0,3
-Bais,FRA,48.2525,-0.357,2.3,1
-Baissey,FRA,47.7486,5.2494,12.0,1
-Balazé,FRA,48.1781,-1.1828,10.3,1
-Bambiderstroff,FRA,49.1011,6.597,12.0,1
-Barby,FRA,49.5251,4.3157,10.0,1
-Barre,FRA,43.7433,2.8156,17.03,3
-Bassu,FRA,48.8343,4.6931,11.9,1
-Baudignécourt,FRA,48.5653,5.4588,12.0,1
-Baudreville,FRA,49.3086,-1.6244,11.5,1
-Bazoches-les-Gallerandes,FRA,48.1625,2.0514,12.0,1
-Beaucaire,FRA,43.7797,4.5938,11.5,3
-Beauchamps,FRA,50.0186,1.5241,16.0,1
-Beaudignies,FRA,50.2293,3.5855,8.0,1
-Beaufou,FRA,46.8189,-1.5247,12.0,1
-Beaurevoir,FRA,49.9967,3.3295,18.0,1
-Beausemblant,FRA,45.2123,4.84,12.0,3
-Beausite,FRA,48.9673,5.2126,12.0,1
-Beauval,FRA,50.1082,2.3287,7.5,1
-Beauvilliers,FRA,48.3004,1.6548,11.5,1
-Benet,FRA,46.3692,-0.6137,22.0,1
-Bernay-Saint-Martin,FRA,46.0663,-0.6259,12.0,1
-Bertignolles,FRA,48.1367,4.5125,6.2,1
-Beuveille,FRA,49.4359,5.6758,8.0,1
-Beuvraignes,FRA,49.6388,2.7757,10.0,1
-Beuzec-Cap-Sizun,FRA,48.0717,-4.5071,1.5,1
-Biesles,FRA,48.1029,5.2862,12.0,1
-Bignan,FRA,47.8773,-2.7592,2.4,1
-Binas,FRA,47.9065,1.4655,11.9,1
-Bligny-le-Sec,FRA,47.448,4.7403,8.0,1
-Boisville-la-Saint-Père,FRA,48.3314,1.7002,9.2,1
-Bollène,FRA,44.288,4.7523,7.5,3
-Bonnet,FRA,48.5335,5.41,24.0,1
-Bonneuil-les-Eaux,FRA,49.6805,2.2435,12.0,1
-Bonnières,FRA,50.237,2.2685,19.95,1
-Bonvillers,FRA,49.5854,2.3517,11.5,1
-Boubers-sur-Canche,FRA,50.2909,2.2368,8.35,1
-Bougainville,FRA,49.8646,2.0463,22.0,1
-Bouillancourt-en-Séry,FRA,49.9602,1.6297,9.0,1
-Bouin,FRA,46.9811,-2.0045,19.5,1
-Boulay-Moselle,FRA,49.1803,6.5191,30.5,1
-Bourbriac,FRA,48.4661,-3.1996,10.0,1
-Bourgneuf-en-Retz,FRA,47.0379,-1.9261,12.0,1
-Bourthes,FRA,50.6125,1.9343,20.7,1
-Bousbach,FRA,49.145,6.9463,8.0,1
-Boutavent,FRA,49.6384,1.7525,2.4,1
-Bovée-sur-Barboure,FRA,48.6371,5.5094,12.0,1
-Brachy,FRA,49.8161,0.9491,12.0,1
-Brailly-Cornehotte,FRA,50.2242,1.9579,11.5,1
-Brem-sur-Mer,FRA,46.6118,-1.8116,4.25,1
-Bressuire,FRA,46.8545,-0.4796,15.65,1
-Breteuil,FRA,49.634,2.2921,12.0,1
-Brissy-Hamégicourt,FRA,49.7429,3.4004,6.0,1
-Broquiès,FRA,44.0179,2.7069,1.7,3
-Brusque,FRA,43.7645,2.9482,15.6,3
-Bussière-Saint-Georges,FRA,46.4018,2.1546,17.0,1
-Cabrespine,FRA,43.3763,2.4714,10.4,3
-Caix,FRA,49.8105,2.6453,12.0,1
-Calenzana,FRA,42.4783,8.8041,6.0,14
-Callengeville,FRA,49.8242,1.5219,24.5,1
-Cambernon,FRA,49.0869,-1.3806,9.2,1
-Cambon-et-Salvergues,FRA,43.6536,2.8782,29.9,3
-Campbon,FRA,47.416,-1.967,12.0,1
-Campigny,FRA,49.3183,0.5617,10.0,1
-Camplong,FRA,43.6889,3.1118,2.7,3
-Campénéac,FRA,47.9624,-2.2778,12.0,1
-Candas,FRA,50.0992,2.2811,10.0,1
-Canet,FRA,43.2264,2.8311,11.5,3
-Cast,FRA,48.1489,-4.1185,10.0,1
-Castanet-le-Haut,FRA,43.6735,2.9543,13.8,3
-Castelnau-Pégayrols,FRA,44.1659,2.9008,30.81,3
-Caudebronde,FRA,43.388,2.3031,4.0,3
-Caulières,FRA,49.7864,1.8994,17.5,1
-Caurel,FRA,48.2173,-3.0396,4.25,1
-Celles-sur-Belle,FRA,46.2404,-0.218,9.4,1
-Cerisières,FRA,48.3086,5.0777,8.0,1
-Cernon,FRA,48.8462,4.3626,28.9,1
-Chambonchard,FRA,46.161,2.5411,12.0,1
-Champdeniers-Saint-Denis,FRA,46.4799,-0.3827,9.0,1
-Champfleury,FRA,48.6299,4.0391,36.0,1
-Champlin,FRA,49.832,4.2979,27.5,1
-Champéon,FRA,48.3561,-0.5127,4.6,1
-Chantrigné,FRA,48.4126,-0.5606,9.2,1
-Chapelle-Vallon,FRA,48.4344,4.0424,24.0,1
-Charly-sur-Marne,FRA,48.9872,3.2921,22.0,1
-Charmont-en-Beauce,FRA,48.2232,2.1458,30.0,1
-Charmont-sous-Barbuise,FRA,48.4155,4.1812,24.0,1
-Chastel-Nouvel,FRA,44.5707,3.4925,12.0,3
-Chaudeyrac,FRA,44.6418,3.7513,1.7,3
-Chauvé,FRA,47.1586,-2.0118,12.0,1
-Chelers,FRA,50.3818,2.4878,18.0,1
-Chermisey,FRA,48.4149,5.5678,8.0,1
-Chervey,FRA,48.1346,4.4899,12.5,1
-Chicheboville,FRA,49.1052,-0.2198,12.0,1
-Château-Porcien,FRA,49.5342,4.2472,10.0,1
-Châteaulin,FRA,48.2033,-4.0733,10.0,1
-Châtres,FRA,48.4929,3.8369,7.5,1
-Chépy,FRA,50.0636,1.6426,4.4,1
-Chéry,FRA,47.1159,2.0261,13.9,1
-Civray,FRA,46.9733,2.1855,20.0,1
-Clamanges,FRA,48.8298,4.0833,10.02,1
-Clamecy,FRA,47.4613,3.511,12.336,1
-Clitourps,FRA,49.6513,-1.3719,3.3,1
-Cocquerel,FRA,50.0554,1.9604,12.0,1
-Collorec,FRA,48.2915,-3.7716,8.4,1
-Conilhac-Corbières,FRA,43.1849,2.7164,16.7,3
-Conilhac-de-la-Montagne,FRA,42.9788,2.2053,17.0,3
-Conteville,FRA,49.0892,-0.2442,4.0,1
-Contreuve,FRA,49.3619,4.6155,12.0,1
-Coole,FRA,48.7395,4.3915,12.0,1
-Coquelles,FRA,50.9291,1.8143,2.4,1
-Coren,FRA,45.0873,3.1086,15.0,3
-Cormainville,FRA,48.1207,1.616,60.0,1
-Cormont,FRA,50.5646,1.7442,9.2,1
-Corpe,FRA,46.5054,-1.1702,11.05,1
-Corroy,FRA,48.7025,3.9576,17.0,1
-Couffé,FRA,47.3885,-1.2926,10.19,1
-Coulonges-Thouarsais,FRA,46.9234,-0.3329,12.3,1
-Coulours,FRA,48.162,3.5941,10.0,1
-Coume,FRA,49.197,6.583,10.0,1
-Coupelle-Vieille,FRA,50.5328,2.0772,20.0,1
-Coupéville,FRA,48.9043,4.6234,9.3,1
-Courcelles-sur-Aire,FRA,48.9405,5.2336,20.0,1
-Courdemanges,FRA,48.6796,4.5086,6.9,1
-Courgis,FRA,47.777,3.7441,12.0,1
-Coyecques,FRA,50.601,2.1851,8.2,1
-Crennes-sur-Fraubée,FRA,48.3824,-0.2658,10.0,1
-Creutzwald,FRA,49.2092,6.6815,10.0,1
-Criel-sur-Mer,FRA,50.0191,1.3238,14.82,1
-Criquiers,FRA,49.6761,1.7018,6.6,1
-Croixrault,FRA,49.794,1.9867,2.3,1
-Cros-de-Géorand,FRA,44.7994,4.1276,10.26,3
-Cruas,FRA,44.6565,4.7562,6.0,3
-Cruguel,FRA,47.8779,-2.5908,12.0,1
-Cruscades,FRA,43.2,2.8164,11.5,3
-Crèvecoeur-le-Grand,FRA,49.6128,2.0851,12.0,1
-Crédin,FRA,48.039,-2.7652,20.4,1
-Créquy,FRA,50.5028,2.0376,20.25,1
-Cuq,FRA,43.6531,2.0865,12.0,3
-Cuxac-Cabardès,FRA,43.3905,2.279,12.0,3
-Damery,FRA,49.7306,2.7362,11.4,1
-Dargies,FRA,49.6988,1.9814,12.0,1
-Dehlingen,FRA,48.9856,7.1811,12.0,1
-Delouze-Rosières,FRA,48.5658,5.5315,24.0,1
-Derval,FRA,47.6577,-1.6776,17.0,1
-Destry,FRA,48.9456,6.5856,12.0,1
-Dinéault,FRA,48.2166,-4.1674,1.2,1
-Dio-et-Valquières,FRA,43.6688,3.2212,11.97,3
-Dirinon,FRA,48.4011,-4.2693,1.7,1
-Dohem,FRA,50.6277,2.1694,8.0,1
-Domart-en-Ponthieu,FRA,50.0758,2.1237,10.0,1
-Doncourt-lès-Longuyon,FRA,49.4429,5.7144,6.0,1
-Doudelainville,FRA,50.0011,1.7638,10.0,1
-Droupt-Saint-Basle,FRA,48.4802,3.9571,12.3,1
-Droupt-Sainte-Marie,FRA,48.5017,3.9386,12.3,1
-Eaucourt-sur-Somme,FRA,50.0684,1.8882,10.0,1
-Erbray,FRA,47.6693,-1.3217,11.5,1
-Ervillers,FRA,50.1646,2.8258,6.0,1
-Escamps,FRA,47.7173,3.4734,4.1,1
-Esclavolles-Lurey,FRA,48.5549,3.6499,14.0,1
-Esnouveaux,FRA,48.1324,5.3485,10.0,1
-Esquennoy,FRA,49.6549,2.2698,12.0,1
-Euvy,FRA,48.7251,3.9935,27.5,1
-Falleron,FRA,46.8626,-1.7007,11.5,1
-Familly,FRA,48.9607,0.3469,10.2,1
-Fauquembergues,FRA,50.5824,2.1113,31.35,1
-Ferrière-et-Lafolie,FRA,48.399,5.0753,12.0,1
-Fiefs,FRA,50.4997,2.321,12.8,1
-Fiennes,FRA,50.8239,1.83,11.5,1
-Fienvillers,FRA,50.1183,2.2351,8.35,1
-Fierville-Bray,FRA,49.0649,-0.179,20.0,1
-Fillières,FRA,49.4117,5.8423,10.0,1
-Fitou,FRA,42.8959,2.9662,22.1,3
-Flammerécourt,FRA,48.3597,5.0437,10.0,1
-Flavin,FRA,44.2881,2.6217,10.0,3
-Fontaine-Mâcon,FRA,48.4581,3.5073,12.3,1
-Fortel-en-Artois,FRA,50.2575,2.2296,11.4,1
-Fos-sur-Mer,FRA,43.4557,4.9042,14.0,3
-Foulcrey,FRA,48.6398,6.8677,13.2,1
-Fraisse-sur-Agout,FRA,43.5926,2.7972,23.0,3
-Framerville-Rainecourt,FRA,49.8633,2.7201,12.0,1
-Francastel,FRA,49.5899,2.1485,12.0,1
-Francheville,FRA,48.8791,4.5395,14.7,1
-Freigné,FRA,47.5364,-1.1061,9.2,1
-Fresnes-Tilloloy,FRA,49.9828,1.7605,10.0,1
-Fresnes-en-Saulnois,FRA,48.839,6.4393,11.9,1
-Fresnoy-le-Grand,FRA,49.9537,3.4196,13.8,1
-Fressenneville,FRA,50.0609,1.5667,23.92,1
-Freycenet-la-Tour,FRA,44.9355,4.0707,12.0,3
-Freyssenet,FRA,44.689,4.5468,10.6,3
-Froidfond,FRA,46.8796,-1.7552,6.0,1
-Fruges,FRA,50.5099,2.0677,43.1,1
-Frénouville,FRA,49.1325,-0.2483,12.0,1
-Frévent,FRA,50.2695,2.2933,8.0,1
-Fécamp,FRA,49.7526,0.3961,4.7,1
-Gamaches,FRA,49.9949,1.5568,11.5,1
-Garcelles-Secqueville,FRA,49.0965,-0.2799,12.0,1
-Gavray,FRA,48.9024,-1.3303,2.0,1
-Ger,FRA,48.6717,-0.8037,8.2,1
-Germinon,FRA,48.8867,4.1786,75.0,1
-Gogney,FRA,48.6146,6.8693,8.8,1
-Gommerville,FRA,48.3788,1.8827,27.85,1
-Gonfreville,FRA,49.2312,-1.4031,16.31,1
-Gouchaupre,FRA,49.9225,1.2952,11.0,1
-Gourgançon,FRA,48.6674,4.0369,48.0,1
-Gournay-Loizé,FRA,46.1497,-0.0487,12.0,1
-Grand-Fougeray,FRA,47.7339,-1.7279,12.4,1
-Gratot,FRA,49.0686,-1.4952,2.0,1
-Greneville-en-Beauce,FRA,48.1892,2.1103,25.0,1
-Gruny,FRA,49.7262,2.8171,9.2,1
-Gréning,FRA,48.9741,6.8413,6.9,1
-Gueltas,FRA,48.0915,-2.811,9.3,1
-Guern,FRA,48.0346,-3.1022,8.0,1
-Guerville,FRA,49.9524,1.5259,11.5,1
-Gueschart,FRA,50.2388,1.9886,38.0,1
-Gueures,FRA,49.8425,0.9558,7.5,1
-Guigneville,FRA,48.2157,2.173,18.0,1
-Guilberville,FRA,48.987,-0.9493,8.0,1
-Guindrecourt-sur-Blaise,FRA,48.2978,4.98,8.0,1
-Guégon,FRA,47.9251,-2.5859,10.0,1
-Guéhenno,FRA,47.892,-2.6511,3.6,1
-Hambers,FRA,48.254,-0.4261,8.2,1
-Hangest-en-Santerre,FRA,49.7517,2.602,12.0,1
-Harcanville,FRA,49.708,0.7684,9.2,1
-Hargicourt,FRA,49.7132,2.5195,16.2,1
-Haucourt-Moulaine,FRA,49.4964,5.8074,2.2,1
-Hautevesnes,FRA,49.109,3.2351,12.3,1
-Hauteville,FRA,49.8888,3.5236,25.0,1
-Hendecourt-lès-Cagnicourt,FRA,50.2148,2.949,12.0,1
-Herlincourt,FRA,50.3444,2.2917,13.8,1
-Herly,FRA,50.5411,1.9906,12.0,1
-Hermin,FRA,50.4141,2.5529,11.5,1
-Hescamps,FRA,49.7289,1.8781,6.0,1
-Hombleux,FRA,49.7434,2.9916,18.0,1
-Houdelaincourt,FRA,48.5517,5.4565,12.0,1
-Huclier,FRA,50.4363,2.3547,13.8,1
-Huiron,FRA,48.6925,4.495,6.9,1
-Héninel,FRA,50.2333,2.8708,6.0,1
-Hétomesnil,FRA,49.6316,2.0404,12.0,1
-Hézecques,FRA,50.5342,2.1911,18.2,1
-Iffendic,FRA,48.1139,-2.0243,2.2,1
-Igney,FRA,48.6327,6.8196,13.2,1
-Illois,FRA,49.7452,1.6461,9.0,1
-Iron,FRA,49.9509,3.6645,24.0,1
-Is-en-Bassigny,FRA,48.0345,5.447,12.0,1
-Ivergny,FRA,50.2377,2.3794,12.0,1
-Janville,FRA,48.2008,1.8895,20.1,1
-Jouy-en-Pithiverais,FRA,48.1498,2.1307,12.0,1
-Juillé,FRA,48.2444,0.126,10.8,1
-Kergrist,FRA,48.1474,-2.9286,19.7,1
-Kergrist-Moëlou,FRA,48.2773,-3.333,27.3,1
-L'Île-d'Olonne,FRA,46.5696,-1.7737,5.34,1
-La Benâte,FRA,46.0075,-0.5576,12.0,1
-La Chapelle-Gaudin,FRA,46.9248,-0.3859,12.3,1
-La Chapelle-Laurent,FRA,45.1831,3.243,6.0,3
-La Chapelle-Rousselin,FRA,47.1949,-0.8025,7.5,1
-La Chaussée-sur-Marne,FRA,48.8434,4.5435,22.25,1
-La Désirade,FRA,16.3115,-61.053,1.65,4
-La Fage-Montivernoux,FRA,44.7471,3.1517,11.69,3
-La Faye,FRA,46.0194,0.1593,12.0,1
-La Gacilly,FRA,47.7729,-2.1562,12.0,1
-La Garnache,FRA,46.8974,-1.8251,12.0,1
-La Haie-Traversaine,FRA,48.3589,-0.6132,12.0,1
-La Limouzinière,FRA,46.9877,-1.6412,12.15,1
-La Marne,FRA,46.9916,-1.7184,10.25,1
-La Motte-de-Galaure,FRA,45.1992,4.9007,4.0,3
-La Neuville-Bosmont,FRA,49.7149,3.8333,12.0,1
-La Palme,FRA,42.9653,2.9948,9.2,3
-La Prénessaye,FRA,48.1859,-2.6476,10.0,1
-La Répara-Auriples,FRA,44.6612,4.9943,4.8,3
-La Souterraine,FRA,46.2369,1.4759,8.0,1
-La Tourlandry,FRA,47.143,-0.699,10.0,1
-La Tâche,FRA,45.87,0.3638,16.304,1
-Lacombe,FRA,43.4059,2.2404,8.0,3
-Lafresguimont-Saint-Martin,FRA,49.8228,1.8101,12.0,1
-Lamballe,FRA,48.4687,-2.4951,9.2,1
-Lamontélarié,FRA,43.6205,2.6084,12.0,3
-Landroff,FRA,48.9648,6.6172,16.0,1
-Laneuville-au-Rupt,FRA,48.7072,5.5762,11.5,1
-Lanfains,FRA,48.3658,-2.9117,7.5,1
-Langoëlan,FRA,48.1209,-3.2335,2.0,1
-Lannoy-Cuillère,FRA,49.7089,1.7361,12.0,1
-Lanouée,FRA,47.987,-2.5759,8.0,1
-Lanques-sur-Rognon,FRA,48.0879,5.3698,10.0,1
-Lanrivain,FRA,48.3593,-3.2156,8.5,1
-Lanrivoaré,FRA,48.4659,-4.6345,5.3,1
-Laprugne,FRA,45.994,3.7623,16.08,1
-Lassay-les-Châteaux,FRA,48.4421,-0.4994,6.9,1
-Laucourt,FRA,49.6722,2.7617,10.0,1
-Lauwin-Planque,FRA,50.3928,3.0296,12.0,1
-Lauzach,FRA,47.6109,-2.5561,10.0,1
-Lavallée,FRA,48.8081,5.3329,4.0,1
-Le Bernard,FRA,46.448,-1.4401,12.65,1
-Le Ham,FRA,48.3734,-0.3542,6.0,1
-Le Haut-Corlay,FRA,48.3407,-3.0326,9.0,1
-Le Landreau,FRA,47.2075,-1.2988,9.2,1
-Le Langon,FRA,46.439,-0.947,6.23,1
-Le Margnès,FRA,43.6525,2.5998,15.1,3
-Le Meix-Tiercelin,FRA,48.6397,4.4414,10.0,1
-Le Mesnil-Opac,FRA,49.0184,-1.1147,2.3,1
-Le Portel,FRA,50.7115,1.5754,3.0,1
-Le Pouzin,FRA,44.7519,4.7485,4.6,3
-Le Rochereau,FRA,46.6946,0.1409,6.68,1
-Le Souich,FRA,50.2225,2.3615,12.0,1
-Le Thour,FRA,49.5455,4.0908,24.0,1
-Le Transloy,FRA,50.0506,2.8924,15.0,1
-Le Val-d'Esnoms,FRA,47.7029,5.1976,28.0,1
-Le Vauclin,FRA,14.5435,-60.8568,1.1,15
-Leffincourt,FRA,49.3812,4.5504,20.0,1
-Lehaucourt,FRA,49.9116,3.2777,20.0,1
-Les Clérimois,FRA,48.2292,3.4571,8.0,1
-Les Essarts-le-Vicomte,FRA,48.6649,3.5534,12.3,1
-Les Fougerêts,FRA,47.748,-2.1975,12.0,1
-Les Grandes-Chapelles,FRA,48.4837,4.0087,36.3,1
-Les Nouillers,FRA,45.9352,-0.6572,10.0,1
-Les Sièges,FRA,48.172,3.5343,8.0,1
-Lesterps,FRA,46.012,0.7922,8.0,1
-Lestrade-et-Thouels,FRA,44.0542,2.6484,12.0,3
-Levoncourt,FRA,48.8276,5.3459,4.0,1
-Lhuître,FRA,48.5808,4.2739,24.0,1
-Ligny-Saint-Flochel,FRA,50.3595,2.4234,11.5,1
-Ligny-sur-Canche,FRA,50.284,2.2609,8.0,1
-Lihons,FRA,49.8284,2.7555,12.0,1
-Lihus,FRA,49.6045,2.0387,24.0,1
-Linghem,FRA,50.5891,2.3727,9.2,1
-Liniez,FRA,47.014,1.757,15.0,1
-Lislet,FRA,49.6766,4.0216,10.85,1
-Litz,FRA,49.4268,2.3232,4.0,1
-Lizeray,FRA,46.9849,1.9034,8.0,1
-Lohuec,FRA,48.4624,-3.5264,9.35,1
-Longeville-sur-Mer,FRA,46.4091,-1.4772,12.35,1
-Longueville-sur-Aube,FRA,48.5513,3.9133,24.8,1
-Loon-Plage,FRA,51.0011,2.2229,12.0,1
-Louville-la-Chenard,FRA,48.3358,1.7911,36.0,1
-Luc-sur-Orbieu,FRA,43.1746,2.8097,27.5,3
-Lusignan,FRA,46.4368,0.1138,6.33,1
-Lévigny,FRA,48.2979,4.7074,10.0,1
-Maché,FRA,46.7712,-1.6959,8.0,1
-Magoar,FRA,48.4015,-3.1771,5.6,1
-Mahalon,FRA,48.0271,-4.4191,6.0,1
-Maisnières,FRA,50.015,1.6091,24.0,1
-Maisons-en-Champagne,FRA,48.7366,4.4673,16.0,1
-Maizières,FRA,50.3216,2.4421,12.0,1
-Manneville-ès-Plains,FRA,49.8582,0.751,13.8,1
-Marcellois,FRA,47.3486,4.6167,10.8,1
-Mareuil-sur-Arnon,FRA,46.8788,2.1633,24.0,1
-Margueray,FRA,48.8997,-1.1266,10.0,1
-Marsangis,FRA,48.6116,3.8527,10.0,1
-Marsanne,FRA,44.6395,4.8833,16.0,3
-Marson-sur-Barboure,FRA,48.6353,5.4438,12.3,1
-Massingy-lès-Vitteaux,FRA,47.3958,4.5908,10.8,1
-Mauléon,FRA,46.947,-0.7473,8.0,1
-Maure-de-Bretagne,FRA,47.8971,-1.9981,8.4,1
-Mauron,FRA,48.0827,-2.3048,10.0,1
-Maxent,FRA,47.9783,-2.0162,6.0,1
-Mazeray,FRA,45.9164,-0.5604,12.0,1
-Mazoires,FRA,45.3949,3.0477,4.8,3
-Maël-Pestivien,FRA,48.4038,-3.2901,6.0,1
-Menaucourt,FRA,48.656,5.3623,12.0,1
-Mercoeur,FRA,45.1876,3.3036,7.5,3
-Mergey,FRA,48.3958,4.0326,12.0,1
-Merry-Sec,FRA,47.6588,3.4857,10.0,1
-Migé,FRA,47.676,3.5329,10.25,1
-Mohon,FRA,48.0634,-2.4945,12.0,1
-Moisy,FRA,47.9183,1.3185,23.65,1
-Molain,FRA,50.0331,3.5327,9.0,1
-Molinons,FRA,48.2212,3.5436,10.0,1
-Momerstroff,FRA,49.1552,6.5331,11.5,1
-Monchel-sur-Canche,FRA,50.3032,2.2191,8.35,1
-Monchy-Breton,FRA,50.3983,2.4354,9.2,1
-Montbazin,FRA,43.5327,3.6717,6.0,3
-Montbray,FRA,48.8826,-1.109,10.0,1
-Montcornet,FRA,49.6887,4.0296,10.85,1
-Montdidier,FRA,49.6478,2.5687,8.0,1
-Montjoyer,FRA,44.4825,4.8779,9.75,3
-Montloué,FRA,49.6675,4.0627,12.6,1
-Morvillers-Saint-Saturnin,FRA,49.7785,1.8154,12.0,1
-Moréac,FRA,47.9329,-2.804,16.0,1
-Mouriez,FRA,50.3471,1.9549,12.0,1
-Moustéru,FRA,48.5289,-3.2349,16.2,1
-Mouzeuil-Saint-Martin,FRA,46.4593,-0.9842,8.9,1
-Moyencourt-lès-Poix,FRA,49.7914,2.0408,11.5,1
-Murasson,FRA,43.7609,2.7628,13.8,3
-Murat-sur-Vèbre,FRA,43.6588,2.8709,59.1,3
-Muzillac,FRA,47.5552,-2.4737,10.02,1
-Méautis,FRA,49.2812,-1.2951,8.4,1
-Méligny-le-Grand,FRA,48.6785,5.4936,8.0,1
-Méneslies,FRA,50.0582,1.4945,11.15,1
-Ménil-la-Horgne,FRA,48.7014,5.5318,10.5,1
-Ménéac,FRA,48.1316,-2.4536,6.1,1
-Ménétréols-sous-Vatan,FRA,47.0089,1.8356,24.0,1
-Mésanger,FRA,47.4287,-1.2256,9.2,1
-Naives-Rosières,FRA,48.8005,5.2285,11.5,1
-Nalliers,FRA,46.4658,-1.0398,5.04,1
-Naours,FRA,50.0446,2.2839,10.0,1
-Nelling,FRA,48.9698,6.8646,6.9,1
-Neuchâtel-Urtière,FRA,47.3757,6.7307,10.0,5
-Neuvy-Bouin,FRA,46.6812,-0.4466,10.0,1
-Neuvy-en-Dunois,FRA,48.2026,1.5358,24.0,1
-Nibas,FRA,50.0945,1.5884,24.0,1
-Niedervisse,FRA,49.1625,6.5647,12.0,1
-Nixéville-Blercourt,FRA,49.1118,5.262,12.0,1
-Nohant-en-Graçay,FRA,47.1336,1.9122,10.0,1
-Noirlieu,FRA,48.9397,4.8048,11.9,1
-Noyales,FRA,49.9074,3.5393,12.0,1
-Noyers-Saint-Martin,FRA,49.5469,2.266,12.0,1
-Nozay,FRA,48.5,4.0825,12.0,1
-Nurlu,FRA,50.004,3.0158,8.0,1
-Névian,FRA,43.2038,2.8857,17.85,3
-Oinville-Saint-Liphard,FRA,48.2347,1.9242,20.8,1
-Omey,FRA,48.8527,4.5095,4.2,1
-Omissy,FRA,49.881,3.2984,12.0,1
-Opoul-Périllos,FRA,42.88,2.8579,10.5,3
-Orcevaux,FRA,47.7755,5.2703,12.0,1
-Oresmaux,FRA,49.7662,2.2691,12.0,1
-Ortillon,FRA,48.4931,4.2335,35.0,1
-Orvilliers-Saint-Julien,FRA,48.4388,3.822,12.0,1
-Ouanne,FRA,47.6577,3.4191,18.0,1
-Oupia,FRA,43.2885,2.7752,8.1,3
-Ouzouer-le-Marché,FRA,47.9028,1.5339,10.0,1
-Paizay-le-Tort,FRA,46.1674,-0.1716,12.0,1
-Pamproux,FRA,46.4117,-0.043,12.0,1
-Pannecé,FRA,47.488,-1.2158,18.0,1
-Patay,FRA,48.0509,1.6938,12.0,1
-Payns,FRA,48.3756,3.9579,20.0,1
-Pellafol,FRA,44.7824,5.8806,3.0,16
-Penin,FRA,50.3306,2.4883,24.0,1
-Pertain,FRA,49.8059,2.8682,12.3,1
-Petit-Canal,FRA,16.3899,-61.4498,9.515,4
-Peyrelevade,FRA,45.7104,2.0374,9.0,1
-Pithiviers-le-Vieil,FRA,48.1741,2.2062,10.0,1
-Plestan,FRA,48.4145,-2.4415,14.0,1
-Pleugriffet,FRA,47.994,-2.6913,10.0,1
-Pleyber-Christ,FRA,48.5106,-3.8717,8.1,1
-Plogastel-Saint-Germain,FRA,47.9773,-4.2636,9.2,1
-Plomodiern,FRA,48.1809,-4.217,12.0,1
-Plouarzel,FRA,48.439,-4.7203,3.4,1
-Ploudalmézeau,FRA,48.5372,-4.6694,9.1,1
-Plougras,FRA,48.4965,-3.5645,6.0,1
-Plouguin,FRA,48.529,-4.5933,23.29,1
-Plouigneau,FRA,48.5736,-3.7035,10.0,1
-Plouisy,FRA,48.5841,-3.1911,6.8,1
-Ploumoguer,FRA,48.3996,-4.7157,5.7,1
-Plounévez-Quintin,FRA,48.2853,-3.2406,2.0,1
-Plourin,FRA,48.5026,-4.6843,3.4,1
-Plouvien,FRA,48.5397,-4.4658,10.4,1
-Plouyé,FRA,48.3202,-3.7343,3.0,1
-Plozévet,FRA,47.9828,-4.4092,6.0,1
-Plumieux,FRA,48.1059,-2.5909,8.6,1
-Pluzunet,FRA,48.6365,-3.3706,6.0,1
-Pléchâtel,FRA,47.8751,-1.7341,4.8,1
-Plélan-le-Grand,FRA,47.9966,-2.0797,12.0,1
-Pogny,FRA,48.8662,4.4952,4.2,1
-Poinson-lès-Nogent,FRA,47.9915,5.3802,24.3,1
-Poinville,FRA,48.1746,1.9099,35.75,1
-Poiseul-la-Grange,FRA,47.5775,4.7937,10.0,1
-Pont-Melvez,FRA,48.4743,-3.2847,19.5,1
-Pont-Remy,FRA,50.0622,1.9143,12.0,1
-Pont-de-Salars,FRA,44.2779,2.7097,12.0,3
-Pontruet,FRA,49.9149,3.2294,12.0,1
-Port-Saint-Louis-du-Rhône,FRA,43.4161,4.8059,21.25,3
-Portel-des-Corbières,FRA,43.0519,2.9062,11.775,3
-Pouillé-les-Côteaux,FRA,47.4671,-1.1741,9.693,1
-Poussan,FRA,43.4943,3.6605,6.0,3
-Pouzols-Minervois,FRA,43.2849,2.8122,5.1,3
-Pradelles-Cabardès,FRA,43.4117,2.4389,10.4,3
-Preuseville,FRA,49.8803,1.5052,13.5,1
-Prouville,FRA,50.1561,2.1299,20.0,1
-Pussay,FRA,48.3506,1.9985,9.2,1
-Périgny-la-Rose,FRA,48.5539,3.6246,14.0,1
-Péré,FRA,46.0924,-0.8163,8.4,1
-Quesnoy-sur-Airaines,FRA,49.9359,1.9961,34.5,1
-Quincy,FRA,47.1302,2.1559,12.0,1
-Quinquempoix,FRA,49.5472,2.4189,11.5,1
-Quittebeuf,FRA,49.1072,1.006,8.28,1
-Radenac,FRA,47.9488,-2.7136,8.2,1
-Radinghem,FRA,50.547,2.1176,8.0,1
-Rageade,FRA,45.1481,3.292,26.0,3
-Raival,FRA,48.8863,5.2511,12.0,1
-Rambures,FRA,49.9412,1.6954,12.0,1
-Raucourt-et-Flaba,FRA,49.5896,4.9623,12.0,1
-Reffroy,FRA,48.6263,5.4708,12.3,1
-Rehaincourt,FRA,48.3614,6.4694,6.8,1
-Remilly-Wirquin,FRA,50.67,2.1755,12.3,1
-Renneville,FRA,49.6513,4.136,18.45,1
-Repaix,FRA,48.6125,6.8308,13.2,1
-Rethonvillers,FRA,49.7362,2.8559,17.7,1
-Retiers,FRA,47.9058,-1.3436,11.5,1
-Rhèges,FRA,48.5322,3.9947,12.3,1
-Ribemont,FRA,49.7885,3.4706,10.0,1
-Rilhac-Lastours,FRA,45.6586,1.1137,2.0,1
-Rimboval,FRA,50.5151,1.9891,10.0,1
-Riols,FRA,43.5016,2.7979,3.6,3
-Rivesaltes,FRA,42.7789,2.8767,9.0,3
-Roche-Charles-la-Mayrand,FRA,45.4478,3.02,16.3,3
-Rochefort-en-Valdaine,FRA,44.5122,4.858,7.5,3
-Roinville,FRA,48.4419,1.7561,8.0,1
-Roman,FRA,48.8364,1.0452,10.0,1
-Ronchois,FRA,49.724,1.6232,12.0,1
-Roquefort-des-Corbières,FRA,42.9921,2.9299,13.855,3
-Roquetaillade,FRA,42.9988,2.2072,5.93,3
-Roudouallec,FRA,48.1202,-3.6944,5.6,1
-Roumens,FRA,43.4643,1.9361,8.35,3
-Roussas,FRA,44.4426,4.7873,21.0,3
-Rouy-le-Petit,FRA,49.7656,2.9528,16.4,1
-Rouécourt,FRA,48.3284,5.0753,12.0,1
-Roye,FRA,49.6727,2.7927,34.0,1
-Rully,FRA,48.829,-0.7154,12.0,1
-Rumont,FRA,48.8297,5.2712,24.6,1
-Réclainville,FRA,48.3381,1.7387,6.0,1
-Rémérangles,FRA,49.4485,2.2911,24.0,1
-Rézentières,FRA,45.1344,3.1057,12.0,3
-Sachin,FRA,50.4926,2.367,9.2,1
-Saffré,FRA,47.4913,-1.5793,16.304,1
-Sains-lès-Pernes,FRA,50.4789,2.3488,6.4,1
-Saint-Agrève,FRA,45.0053,4.4131,13.812,3
-Saint-Alban,FRA,48.5547,-2.5089,10.0,1
-Saint-Allouestre,FRA,47.9081,-2.7358,9.693,1
-Saint-Amand,FRA,49.0443,-0.9484,13.8,1
-Saint-Amand-sur-Fion,FRA,48.8267,4.6109,17.9,1
-Saint-André-Farivillers,FRA,49.5819,2.3001,11.5,1
-Saint-Arnac,FRA,42.777,2.5354,1.75,3
-Saint-Aubin-sur-Aire,FRA,48.7149,5.4467,23.7,1
-Saint-Barnabé,FRA,48.1385,-2.7018,12.0,1
-Saint-Bihy,FRA,48.3754,-2.9682,3.2,1
-Saint-Christophe-du-Bois,FRA,47.0289,-0.9652,8.0,1
-Saint-Cirgues-en-Montagne,FRA,44.7679,4.0883,18.45,3
-Saint-Clément,FRA,44.9504,4.2607,1.2,3
-Saint-Congard,FRA,47.768,-2.3283,8.4,1
-Saint-Coulitz,FRA,48.1822,-4.0672,8.8,1
-Saint-Crépin,FRA,45.9968,-0.7402,9.5,1
-Saint-Cyr-en-Pail,FRA,48.4335,-0.2521,10.25,1
-Saint-Fraigne,FRA,45.9569,-0.0148,12.0,1
-Saint-François,FRA,16.273,-61.2811,4.34,4
-Saint-Félix-Lauragais,FRA,43.4508,1.9019,10.02,3
-Saint-Genou,FRA,46.9111,1.3511,12.0,1
-Saint-Georges-des-Gardes,FRA,47.1673,-0.7645,10.0,1
-Saint-Georges-sur-Arnon,FRA,46.9823,2.0734,46.0,1
-Saint-Germain-de-Longue-Chaume,FRA,46.7188,-0.3437,10.0,1
-Saint-Germainmont,FRA,49.521,4.135,20.5,1
-Saint-Gildas,FRA,48.4222,-3.0068,9.2,1
-Saint-Gouéno,FRA,48.2799,-2.556,5.95,1
-Saint-Guen,FRA,48.2112,-2.9132,9.2,1
-Saint-Hilaire-la-Croix,FRA,46.0401,3.0454,1.2,1
-Saint-Jacques-de-Néhou,FRA,49.4205,-1.616,10.25,1
-Saint-Jean-Lachalm,FRA,44.942,3.7239,18.6,3
-Saint-Just-en-Chaussée,FRA,49.5114,2.4175,6.9,1
-Saint-Loup-en-Champagne,FRA,49.4505,4.2684,26.0,1
-Saint-Léger,FRA,50.1839,2.8514,10.25,1
-Saint-Léger-lès-Domart,FRA,50.056,2.1407,12.0,1
-Saint-Macoux,FRA,46.1184,0.2263,12.0,1
-Saint-Malo-des-Trois-Fontaines,FRA,48.0171,-2.469,10.5,1
-Saint-Mandé-sur-Brédoire,FRA,46.0371,-0.2779,12.0,1
-Saint-Martin-de-Crau,FRA,43.6121,4.8564,7.2,3
-Saint-Martin-des-Besaces,FRA,49.0087,-0.8431,6.0,1
-Saint-Martin-du-Mont,FRA,47.4152,4.8122,12.0,1
-Saint-Martin-lès-Melle,FRA,46.2261,-0.1684,12.0,1
-Saint-Martin-sur-Oust,FRA,47.7627,-2.2644,9.0,1
-Saint-Michel-Chef-Chef,FRA,47.1753,-2.1272,10.25,1
-Saint-Ouen-Domprot,FRA,48.614,4.3926,10.0,1
-Saint-Philbert-de-Bouaine,FRA,46.9925,-1.5071,16.4,1
-Saint-Pierre-Bénouville,FRA,49.7377,0.9745,12.0,1
-Saint-Pierre-de-Maillé,FRA,46.6777,0.8251,24.0,1
-Saint-Pierre-le-Viger,FRA,49.8261,0.8502,12.0,1
-Saint-Quentin,FRA,49.8473,3.2779,11.0,1
-Saint-Quentin-en-Mauges,FRA,47.2888,-0.8988,16.0,1
-Saint-Quentin-la-Motte-Croix-au-,FRA,50.0734,1.4527,9.2,1
-Saint-Sauveur,FRA,46.8024,0.6456,22.9,1
-Saint-Sauveur-de-Ginestoux,FRA,44.7019,3.6154,6.68,3
-Saint-Servais,FRA,48.3862,-3.374,6.1,1
-Saint-Servant,FRA,47.899,-2.5122,12.0,1
-Saint-Vincent-des-Landes,FRA,47.6556,-1.5048,12.0,1
-Saint-Ébremond-de-Bonfossé,FRA,49.0725,-1.1451,6.93,1
-Saint-Étienne-de-Lugdarès,FRA,44.6475,3.9732,22.6,3
-Saint-Étienne-du-Gué-de-l'Isle,FRA,48.0853,-2.6433,8.8,1
-Sainte-Marie,FRA,47.6934,-2.0138,1.25,1
-Sainte-Rose,FRA,-21.192,55.7545,6.256,17
-Sainte-Suzanne,FRA,-20.9511,55.5908,10.175,18
-Sainte-Thorette,FRA,47.0778,2.2069,20.0,1
-Sallen,FRA,49.117,-0.8395,8.3,1
-Salles-Curan,FRA,44.1597,2.8299,87.0,3
-Salles-de-Villefagnan,FRA,45.9595,0.1704,20.7,1
-Santilly,FRA,48.1488,1.8797,10.0,1
-Saulces-Champenoises,FRA,49.4465,4.5042,20.0,1
-Saulgond,FRA,45.9561,0.7864,6.0,1
-Saulzet,FRA,46.1373,3.2207,1.2,1
-Sauveterre,FRA,43.4532,2.5599,12.0,3
-Savières,FRA,48.4056,3.9341,12.0,1
-Scaër,FRA,48.0279,-3.7304,11.5,1
-Semoine,FRA,48.6737,4.0936,12.0,1
-Sepmeries,FRA,50.2772,3.5606,2.0,1
-Seraumont,FRA,48.4311,5.6079,10.25,1
-Sermaises,FRA,48.2985,2.2037,12.0,1
-Servières,FRA,44.5858,3.4181,2.0,3
-Silfiac,FRA,48.1448,-3.1732,3.4,1
-Sion-les-Mines,FRA,47.7292,-1.581,10.0,1
-Sorbon,FRA,49.5514,4.3721,6.6,1
-Sortosville-en-Beaumont,FRA,49.4248,-1.7098,8.25,1
-Soudan,FRA,46.4326,-0.0955,10.25,1
-Soudan,FRA,47.7256,-1.2902,6.9,1
-Souilly,FRA,49.0294,5.3014,18.0,1
-Soulangy,FRA,48.9397,-0.2143,10.0,1
-Sourdeval-les-Bois,FRA,48.912,-1.2768,2.0,1
-Sourdon,FRA,49.708,2.4008,13.8,1
-Souvigné,FRA,46.3587,-0.1704,8.0,1
-Stenay,FRA,49.5005,5.1981,11.5,1
-Séglien,FRA,48.1024,-3.1517,9.25,1
-Ségur,FRA,44.2911,2.8443,12.0,3
-Séry-lès-Mézières,FRA,49.765,3.4235,8.0,1
-Sévigny-Waleppe,FRA,49.6174,4.0803,18.45,1
-Talizat,FRA,45.1231,3.0534,18.0,3
-Tangry,FRA,50.4614,2.3595,9.2,1
-Tarzy,FRA,49.8762,4.2968,8.0,1
-Tellancourt,FRA,49.509,5.6303,16.0,1
-Terminiers,FRA,48.0896,1.7296,21.4,1
-Terre-de-Bas,FRA,15.8544,-61.6334,1.925,4
-Thaas,FRA,48.6395,3.8703,12.0,1
-Thicourt,FRA,48.9916,6.5588,8.0,1
-Thory,FRA,49.72,2.4307,13.8,1
-Togny-aux-Boeufs,FRA,48.8473,4.4212,22.0,1
-Tournoisis,FRA,48.0009,1.6034,36.0,1
-Tourville-la-Chapelle,FRA,49.9454,1.259,11.0,1
-Touvois,FRA,46.9066,-1.6792,8.2,1
-Trans,FRA,48.2832,-0.3087,6.9,1
-Trayes,FRA,46.669,-0.4826,10.0,1
-Treilles,FRA,42.9178,2.9436,13.0,3
-Trébry,FRA,48.3456,-2.5575,9.0,1
-Trécon,FRA,48.8666,4.0876,12.25,1
-Trémeheuc,FRA,48.4387,-1.6977,12.0,1
-Trémont,FRA,48.5993,0.2735,2.4,1
-Tuchan,FRA,42.9063,2.7278,11.7,3
-Turcey,FRA,47.4088,4.7193,22.0,1
-Téterchen,FRA,49.2303,6.5678,9.0,1
-Vairé,FRA,46.6054,-1.7499,4.2,1
-Valanjou,FRA,47.2181,-0.6063,12.0,1
-Valhuon,FRA,50.434,2.384,4.0,1
-Valonne,FRA,47.3422,6.6686,10.0,5
-Vanault-le-Châtel,FRA,48.8658,4.7049,8.5,1
-Vatan,FRA,47.0539,1.8255,18.0,1
-Vaudeville-le-Haut,FRA,48.4492,5.5892,8.2,1
-Vauvillers,FRA,49.8429,2.7066,12.0,1
-Vaux-Andigny,FRA,50.0109,3.5233,12.0,1
-Vaux-lès-Mouzon,FRA,49.6033,5.1364,7.269,1
-Venoy,FRA,47.8052,3.6544,12.0,1
-Verchin,FRA,50.4939,2.1804,18.2,1
-Vernoux-en-Gâtine,FRA,46.6225,-0.5176,8.0,1
-Vesvres-sous-Chalancey,FRA,47.6958,5.171,12.0,1
-Veulettes-sur-Mer,FRA,49.8454,0.5876,8.0,1
-Vieilmoulin,FRA,47.3141,4.6724,12.0,1
-Villemeux-sur-Eure,FRA,48.6715,1.4578,12.0,1
-Villeret,FRA,49.9495,3.1883,4.0,1
-Villers-le-Sec,FRA,49.7713,3.5038,6.0,1
-Villeselve,FRA,49.6861,3.1125,10.25,1
-Villeseneux,FRA,48.8443,4.1431,12.25,1
-Villesèque-des-Corbières,FRA,43.0193,2.8696,55.31,3
-Villeveyrac,FRA,43.5006,3.5933,14.0,3
-Villotte-Saint-Seine,FRA,47.4298,4.7126,8.0,1
-Vincly,FRA,50.5561,2.1791,9.9,1
-Vis-en-Artois,FRA,50.2457,2.9353,2.4,1
-Vitry-la-Ville,FRA,48.8249,4.4015,34.0,1
-Vitry-lès-Nogent,FRA,47.9864,5.3435,4.05,1
-Viviers-sur-Chiers,FRA,49.4655,5.6314,20.8,1
-Vix,FRA,46.3542,-0.8573,10.0,1
-Viâpres-le-Petit,FRA,48.5816,4.053,2.0,1
-Vouarces,FRA,48.5924,3.8911,12.0,1
-Vouthon-Haut,FRA,48.4742,5.6026,10.25,1
-Vron,FRA,50.3162,1.7646,17.2,1
-Vyt-lès-Belvoir,FRA,47.3487,6.6263,10.0,5
-Wancourt,FRA,50.2557,2.8558,2.0,1
-Woelfling-lès-Sarreguemines,FRA,49.0858,7.1844,10.0,1
-Xambes,FRA,45.8242,0.1068,13.8,1
-Yvignac-la-Tour,FRA,48.3493,-2.1711,8.0,1
-Échalot,FRA,47.6073,4.8348,16.0,1
-Écly,FRA,49.5543,4.287,10.0,1
-Éguilly-sous-Bois,FRA,48.1391,4.538,12.5,1
-Épehy,FRA,50.0062,3.1329,18.4,1
-Épense,FRA,48.9745,4.8313,4.25,1
-Épizon,FRA,48.3735,5.3222,80.0,1
-Érize-Saint-Dizier,FRA,48.8107,5.2833,11.5,1
-Érize-la-Brûlée,FRA,48.8467,5.2753,10.0,1
-Érize-la-Petite,FRA,48.9145,5.2374,12.0,1
-Étalante,FRA,47.6291,4.7664,20.0,1
-Amrumbank West,DEU,54.5,7.7999,301.32,0
-BARD Offshore 1,DEU,54.36,5.98,400.0,0
-Baltic 2,DEU,54.983,13.162,288.0,19
-Borkum Riffgrund I,DEU,53.9667,6.55,312.0,0
-Butendiek,DEU,55.019,7.774,288.0,0
-Bürgerwindpark im Kirchspiel Medelby,DEU,54.7776,9.1334,82.23,0
-Global Tech I,DEU,54.509,6.367,400.0,0
-Gode Wind 1 - Teil 1,DEU,54.041,6.994,263.1,0
-Meerwind SüdIOst,DEU,54.392,7.704,288.0,0
-OWP Nordsee Ost,DEU,54.445,7.683,295.2,0
-Offshore Windfarm Danysk,DEU,55.1416,7.1945,284.4,0
-SWM Wind Havelland GmbH & Co. KG,DEU,52.3869,12.5636,171.0,6
-Trianel Windpark Borkum,DEU,54.0416,6.4667,200.0,0
-UW Bertikow,DEU,53.2641,14.048,340.0,20
-Windpark Arneburg 2,DEU,52.7002,11.9387,31.5,6
-Windpark Arneburg 2,DEU,52.7002,11.9387,117.0,6
-Windpark Dahme,DEU,51.8686,13.5491,76.5,21
-Windpark Druxberge,DEU,52.1651,11.2742,116.7,6
-Windpark Fehmarn,DEU,54.4856,11.1097,143.0,2
-Windpark Hakenstedt,DEU,52.1663,11.2847,82.7,6
-Windpark Hüselitz,DEU,52.5174,11.7882,92.4,6
-Windpark Klettwitz,DEU,51.5452,13.8652,89.1,22
-Windpark Reußenköge,DEU,54.6409,9.0139,189.312,0
-Windpark Riffgat,DEU,53.692,6.475,113.4,0
-Windparks Biere und Borne,DEU,51.9605,11.6207,94.5,6
-Altagowlan,IRL,54.1222,-8.1486,7.6,7
-Ballincollig Hill,IRL,52.3096,-9.5892,13.3,8
-Ballinlough/Ikerrin,IRL,52.8301,-8.0752,2.55,8
-Ballywater,IRL,52.5387,-6.2396,42.0,9
-Barranafaddock,IRL,52.179,-8.091,32.4,8
-Bellacorick,IRL,54.1126,-9.5875,6.45,7
-Bindoo,IRL,54.0108,-7.1142,48.0,23
-Boggeragh,IRL,52.0396,-8.9154,57.0,8
-Boggeragh 2,IRL,52.0396,-8.9154,66.7,8
-Bruckana,IRL,52.7846,-7.6688,39.6,8
-Castledockrell,IRL,52.5898,-6.6391,41.4,9
-Cloghboola,IRL,52.3454,-9.4513,46.0,8
-Coomacheo,IRL,52.0174,-9.1545,41.4,8
-Crocane,IRL,51.844,-8.1557,1.6,8
-Cuillalea,IRL,53.8485,-9.0712,3.4,7
-Derrybrien,IRL,53.0937,-8.6095,60.0,8
-Derrynadivva,IRL,53.9104,-9.3408,8.0,7
-Garracummer,IRL,52.642,-8.1479,42.5,8
-Gavagh Glebe,IRL,54.1603,-8.2221,26.0,7
-Geevagh,IRL,54.1417,-8.2673,5.0,7
-Glenough,IRL,52.6386,-8.0786,32.5,8
-Kilgarvan,IRL,51.9342,-9.3269,45.0,8
-Kill Hill,IRL,52.5394,-7.7745,36.8,8
-Knockacummer 1,IRL,52.2788,-9.0988,87.0,8
-Knocknagoum,IRL,52.3412,-9.5676,44.5,8
-Largan Hill,IRL,53.9475,-8.5596,5.9,7
-Lenanavea,IRL,53.9241,-9.3505,4.5,7
-Lisheen,IRL,52.7589,-7.7167,54.0,8
-Mace Upper,IRL,53.7707,-8.971,2.4,7
-Meentycat,IRL,54.8702,-7.8562,72.0,24
-Monaincha Bog (Gate 3),IRL,52.9348,-7.7054,32.55,8
-Mount Lucas,IRL,53.2811,-7.2207,84.0,8
-Mountain Lodge,IRL,53.9955,-7.119,34.5,25
-Raheen Barr,IRL,53.9001,-9.3579,18.7,7
-Raheenleagh Wind Farm,IRL,52.7973,-6.3164,36.5,9
-Sliabh Bawn,IRL,53.7356,-8.0679,58.0,7
-Taurbeg,IRL,52.2563,-9.134,25.3,8
-Tullynamoyle,IRL,54.1217,-8.1455,22.0,7
-Beabuorren,NLD,53.0417,5.5014,10.4,0
-Burgervlotbrug,NLD,52.7533,4.6819,7.65,0
-Culemborg,NLD,51.955,5.2278,6.0,0
-De Bjirmen,NLD,53.2342,5.5114,6.0,0
-Delfzijl Zuid,NLD,53.33,6.9181,78.2,0
-EPZ,NLD,51.4388,3.7035,24.05,0
-Ecopark Waalwijk,NLD,51.6825,5.0708,7.5,0
-Egmond aan Zee,NLD,52.6061,4.4188,108.0,0
-Etten-Leur,NLD,51.5866,4.776,6.5,0
-Flushing outer,NLD,51.4425,3.5736,1.58,0
 Gemini,NLD,54.036,5.963,600.0,0
-Halsteren,NLD,51.5283,4.2678,6.8,0
-Haringvliet,NLD,51.8412,4.0606,3.6,0
-Hemweg,NLD,52.4053,4.8466,5.28,0
-Herkingen,NLD,51.71,4.0875,8.25,0
-Hiddum-Houw,NLD,53.083,5.3909,5.23,0
-Irene Vorrink,NLD,52.5083,5.475,16.8,0
-Jacobahaven,NLD,51.5975,3.6848,9.0,0
-Kats II,NLD,51.5675,3.8847,9.0,0
-Kneeshoek,NLD,52.8608,4.8361,4.8,0
-Koegorspolder,NLD,51.3358,3.8278,44.0,0
-Leeuwarden,NLD,53.2014,5.8086,1.8,0
-Lopik,NLD,51.9725,4.9486,6.0,0
-Luchterduinen,NLD,52.405,4.1619,129.0,0
-Marrum,NLD,53.3228,5.802,5.25,0
-Neeltje Jans,NLD,51.632,3.699,12.0,0
-Nerefco,NLD,51.9539,4.0954,22.5,0
-Northeast Binnendijks,NLD,52.588,4.223,217.5,0
-Outside the Northeast,NLD,38.0211,-87.5172,144.0,26
-Pallandt,NLD,51.7044,4.2343,14.0,0
-Princess Amalia,NLD,52.588,4.223,120.0,0
-Rachel Carson (Eemmeerdijk),NLD,52.33,5.5417,18.0,0
-Rozenburg Peninsula,NLD,51.9042,4.2486,15.0,0
-Test Site Lelystad,NLD,52.5083,5.475,8.3,0
-Ulketocht,NLD,52.8383,4.8917,6.0,0
-Velsen,NLD,52.46,4.65,9.0,0
+BARD Offshore 1,DEU,54.36,5.98,400.0,0
+Global Tech I,DEU,54.509,6.367,400.0,0
+Anholt,DNK,56.603,11.209,399.6,11
+UW Bertikow,DEU,53.2641,14.048,340.0,12
+Borkum Riffgrund I,DEU,53.9667,6.55,312.0,0
+Amrumbank West,DEU,54.5,7.7999,301.32,0
+OWP Nordsee Ost,DEU,54.445,7.683,295.2,0
+Baltic 2,DEU,54.983,13.162,288.0,13
+Butendiek,DEU,55.019,7.774,288.0,0
+Meerwind SüdIOst,DEU,54.392,7.704,288.0,0
+Offshore Windfarm Danysk,DEU,55.1416,7.1945,284.4,0
+Gode Wind 1 - Teil 1,DEU,54.041,6.994,263.1,0
+Northeast Binnendijks,NLD,52.588,4.223,217.5,1
+Northwind,BEL,51.6186,2.8998,216.0,2
 Westereems,NLD,53.4375,6.8613,213.3,0
-Weststad Oosterhout,NLD,51.645,4.8597,15.0,0
-Willem Anna Polder,NLD,51.6392,4.1292,9.0,0
-flushing,NLD,51.4425,3.5736,2.3,0
+Horns Rev B,DNK,55.6,7.5825,209.3,0
+Roedsand 2,DNK,54.5228,11.5447,207.0,3
+Trianel Windpark Borkum,DEU,54.0416,6.4667,200.0,0
+Windpark Reußenköge,DEU,54.6409,9.0139,189.312,14
+Thorntonbank - C-Power - Area SW,BEL,51.54,2.921,177.6,2
+Belwind Phase 1,BEL,51.66,2.8,171.0,2
+SWM Wind Havelland GmbH & Co. KG,DEU,52.3869,12.5636,171.0,4
+Roedsand 1,DNK,54.54,11.715,165.6,3
+Horns Rev A,DNK,55.5297,7.9062,160.0,0
+Smola,NOR,63.4106,7.9099,160.0,15
+Thorntonbank - C-Power - Area NE,BEL,51.556,2.9689,147.6,2
+Outside the Northeast,NLD,38.0211,-87.5172,144.0,16
+Windpark Fehmarn,DEU,54.4856,11.1097,143.0,3
+Luchterduinen,NLD,52.405,4.1619,129.0,1
+Princess Amalia,NLD,52.588,4.223,120.0,1
+Windpark Arneburg 2,DEU,52.7002,11.9387,117.0,4
+Windpark Druxberge,DEU,52.1651,11.2742,116.7,4
+Windpark Riffgat,DEU,53.692,6.475,113.4,0
+Egmond aan Zee,NLD,52.6061,4.4188,108.0,1
+Windparks Biere und Borne,DEU,51.9605,11.6207,94.5,4
+Windpark Hüselitz,DEU,52.5174,11.7882,92.4,4
+Windpark Klettwitz,DEU,51.5452,13.8652,89.1,17
+Salles-Curan,FRA,44.1597,2.8299,87.0,8
+Knockacummer 1,IRL,52.2788,-9.0988,87.0,5
+Mount Lucas,IRL,53.2811,-7.2207,84.0,5
+Windpark Hakenstedt,DEU,52.1663,11.2847,82.7,4
+Bürgerwindpark im Kirchspiel Medelby,DEU,54.7776,9.1334,82.23,18
+Windvision Estinnes WIND,BEL,50.4116,4.0804,80.0,19
+Épizon,FRA,48.3735,5.3222,80.0,20
+Delfzijl Zuid,NLD,53.33,6.9181,78.2,0
+Windpark Dahme,DEU,51.8686,13.5491,76.5,21
+Germinon,FRA,48.8867,4.1786,75.0,6
+Hog Jare,NOR,58.6464,5.7483,74.0,22
+Meentycat,IRL,54.8702,-7.8562,72.0,23
+Klim Fjordholme,DNK,57.0599,9.1563,67.2,24
+Boggeragh 2,IRL,52.0396,-8.9154,66.7,5
+Cormainville,FRA,48.1207,1.616,60.0,7
+Derrybrien,IRL,53.0937,-8.6095,60.0,5
+Murat-sur-Vèbre,FRA,43.6588,2.8709,59.1,8
+Fakken,NOR,70.1023,20.1077,59.0,25
+Sliabh Bawn,IRL,53.7356,-8.0679,58.0,26
 Bessakerfjellet,NOR,64.2221,10.3721,58.0,27
-Fakken,NOR,70.1023,20.1077,59.0,28
-Grov,NOR,61.8243,8.9741,45.0,29
-Havoygavlen,NOR,71.0109,24.5824,40.0,30
-Hitra,NOR,63.526,8.7793,55.0,31
-Hog Jare,NOR,58.6464,5.7483,74.0,32
+Boggeragh,IRL,52.0396,-8.9154,57.0,5
+Villesèque-des-Corbières,FRA,43.0193,2.8696,55.31,28
+Hitra,NOR,63.526,8.7793,55.0,29
+Lisheen,IRL,52.7589,-7.7167,54.0,5
+Allonnes,FRA,48.3407,1.676,52.275,7
+Kjollefjord,NOR,70.9217,27.2541,50.0,30
+Gourgançon,FRA,48.6674,4.0369,48.0,6
+Bindoo,IRL,54.0108,-7.1142,48.0,31
+Saint-Georges-sur-Arnon,FRA,46.9823,2.0734,46.0,32
+Cloghboola,IRL,52.3454,-9.4513,46.0,5
 Hundhammerfjelle,NOR,64.7554,11.3764,46.0,33
-Kjollefjord,NOR,70.9217,27.2541,50.0,34
-Nygardsfjellet,NOR,68.5078,17.8764,36.0,35
-Smola,NOR,63.4106,7.9099,160.0,36
+Kilgarvan,IRL,51.9342,-9.3269,45.0,5
+Grov,NOR,61.8243,8.9741,45.0,34
+Knocknagoum,IRL,52.3412,-9.5676,44.5,5
+Koegorspolder,NLD,51.3358,3.8278,44.0,2
+Fruges,FRA,50.5099,2.0677,43.1,9
+Garracummer,IRL,52.642,-8.1479,42.5,5
+Ballywater,IRL,52.5387,-6.2396,42.0,10
+Castledockrell,IRL,52.5898,-6.6391,41.4,10
+Coomacheo,IRL,52.0174,-9.1545,41.4,5
+Havoygavlen,NOR,71.0109,24.5824,40.0,35
+Bruckana,IRL,52.7846,-7.6688,39.6,5
+Gueschart,FRA,50.2388,1.9886,38.0,9
+Kill Hill,IRL,52.5394,-7.7745,36.8,5
+Raheenleagh Wind Farm,IRL,52.7973,-6.3164,36.5,10
+Les Grandes-Chapelles,FRA,48.4837,4.0087,36.3,6
+Aumelas,FRA,43.5319,3.6133,36.0,8
+Champfleury,FRA,48.6299,4.0391,36.0,6
+Louville-la-Chenard,FRA,48.3358,1.7911,36.0,7
+Tournoisis,FRA,48.0009,1.6034,36.0,7
+Nygardsfjellet,NOR,68.5078,17.8764,36.0,36
+Poinville,FRA,48.1746,1.9099,35.75,7
+Allibaudières,FRA,48.6071,4.1483,35.0,6
+Ortillon,FRA,48.4931,4.2335,35.0,6
+Quesnoy-sur-Airaines,FRA,49.9359,1.9961,34.5,9
+Mountain Lodge,IRL,53.9955,-7.119,34.5,37
+Roye,FRA,49.6727,2.7927,34.0,9
+Vitry-la-Ville,FRA,48.8249,4.4015,34.0,6
+Monaincha Bog (Gate 3),IRL,52.9348,-7.7054,32.55,5
+Glenough,IRL,52.6386,-8.0786,32.5,5
+Barranafaddock,IRL,52.179,-8.091,32.4,5
+Ally,FRA,45.1733,3.3009,31.5,38

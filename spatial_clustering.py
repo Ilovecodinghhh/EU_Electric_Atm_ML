@@ -36,6 +36,11 @@ if len(df) < before:
     print(f"  Dropped {before - len(df)} rows with missing lat/lon.")
 df[cap_col] = df[cap_col].fillna(df[cap_col].median())
 
+# 2b. Select top-100 nodes by capacity
+TOP_N = 100
+df = df.nlargest(TOP_N, cap_col).reset_index(drop=True)
+print(f"  Selected top {TOP_N} nodes by {cap_col} (range: {df[cap_col].min():.1f} – {df[cap_col].max():.1f} MW)")
+
 # 3. Convert to radians for haversine metric
 coords_rad = np.radians(df[["latitude", "longitude"]].values)
 
