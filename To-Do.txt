@@ -1,6 +1,10 @@
-Prompt: 多模态时空特征张量集成与数据加载器构建任务目标：
+Prompt: 多模态时空特征张量集成与数据加载器构建任务目标（实际时间序列过大，处理会有压力。你可以先测试短时间（如500个时间步）先确保代码跑通）：
 请编写一个 Python 脚本，将气象、电力、金融和节点元数据集成一个适合 ST-GCN 训练的高维张量，并构建高效的 Data Loader。
-1. 输入数据准备：nodes_df: 包含 physical_cluster, latitude, longitude, capacity_m, country。weather_np: 形状为 (52585, 865, 5) 的 NumPy 数组。price_df: 各国小时级电价数据。finance_pca_np: 形状为 (52585, 3) 的全局股票主成分数据。
+1. 输入数据准备：
+nodes_df: 包含 physical_cluster, latitude, longitude, capacity_m, country。
+weather_np: 形状为 (52585, 865, 5) 的 NumPy 数组。
+price_df: 各国小时级电价数据。
+finance_pca_np: 形状为 (52585, 3) 的全局股票主成分数据。
 2. 核心处理逻辑：特征工程：
 对 capacity_m 进行 $\log(x + 1)$ 处理后执行 Z-score。
 对经纬度进行 Min-Max 归一化。
