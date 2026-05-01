@@ -80,7 +80,16 @@ class SparseGraphConv(nn.Module):
         # Batch sparse mm via reshape: (B*T*C, N) is too large
         # Instead: (N, N) @ (N, B*T*C) → transpose trick
         x_t = x.permute(1, 0, 2).reshape(N, B * T * C)   # (N, B*T*C)
-        out = torch.sparse.mm(A_norm, x_t)                # (N, B*T*C)
+        # Sparse mm doesn't support float16 — force float32 for this op
+        input_dtype = x_t.dtype
+        if input_dtype != torch.float32:
+            x_t = x_t.float()
+            A_used = A_norm.float()
+        else:
+            A_used = A_norm
+        out = torch.sparse.mm(A_used, x_t)                # (N, B*T*C)
+        if out.dtype != input_dtype:
+            out = out.to(input_dtype)
         out = out.reshape(N, B * T, C).permute(1, 0, 2)   # (B*T, N, C)
 
         out = out.reshape(B, T, N, C).permute(0, 2, 1, 3)  # (B, N, T, C)
