@@ -1,0 +1,1 @@
+1. 检查finance PCA的解释方差比 (Explained Variance Ratio)。第一主成分（PC1）的解释方差占比是多少？前 3 个主成分能解释 85% 以上 的方差吗？
