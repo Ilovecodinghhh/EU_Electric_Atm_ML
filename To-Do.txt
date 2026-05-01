@@ -1,0 +1,38 @@
+大纲：
+Prompt: 多模态时空特征张量集成与数据加载器构建任务目标（实际时间序列过大，处理会有压力。你可以先测试短时间（如500个时间步）先确保代码跑通）：
+请编写一个 Python 脚本，将气象、电力、金融和节点元数据集成一个适合 ST-GCN 训练的高维张量，并构建高效的 Data Loader。
+1. 输入数据准备：
+nodes_df: 包含 physical_cluster, latitude, longitude, capacity_m, country。
+weather_np: 形状为 (52585, 865, 5) 的 NumPy 数组。
+price_df: 各国小时级电价数据。
+finance_pca_np: 形状为 (52585, 3) 的全局股票主成分数据。
+2. 核心处理逻辑：特征工程：
+对 capacity_m 进行 $\log(x + 1)$ 处理后执行 Z-score。
+对经纬度进行 Min-Max 归一化。
+将 finance_pca_np 广播（Broadcast）至所有 865 个节点。
+根据 nodes_df['country'] 将对应国家的电价填充到每个节点的特征中。
+添加时间周期特征：使用 $\sin(2\pi \cdot \text{hour}/24)$ 和 $\cos(2\pi \cdot \text{hour}/24)$。
+张量拼接： 最终合成形状为 (Total_Time, 865, F) 的主特征矩阵。
+邻接矩阵构建：创建一个 $865 \times 865$ 的稀疏矩阵。
+同簇节点（physical_cluster 一致）权重设为 1.0。
+非同簇节点但距离在 100km 内的，按距离衰减计算权重。
+使用 scipy.sparse.csr_matrix 保存以节省内存。
+滑动窗口 Dataset：使用 PyTorch Dataset 封装。window_size = 168 (7天), stride = 6。
+X: 过去 168 小时的特征；y: 未来第 24 小时的 Global Stock PC1 变化率。
+3. 显存优化要求 (RTX 5070 Ti 12GB)：
+使用 numpy.memmap 或 torch.utils.data.IterableDataset 如果内存不足。
+簇级采样 (ClusterGCN / Subgraph Sampling) 
+改善逻辑： 如果 865 个点跑不动，聚类后你可以采用 ClusterGCN 策略。每次只抽取 2-3 个簇（比如 200 个点）进行一次训练步。
+确保 y 标签的计算不产生数据泄露（不要在滑动窗口中包含未来信息）。
+提供一个 check_vram_usage() 函数，估算单次 Batch (size=16) 下的显存占用。
+4. 输出结果：返回 train_loader, val_loader, test_loader 以及 adjacency_matrix (Tensor)。
+训练前的温馨提示Target 的平稳性： 在预测股票 PCA 时，建议预测 $\Delta PCA$ (一阶差分)。
+因为 PCA 绝对值可能具有趋势性，不利于模型收敛。
+损失函数建议： 考虑到金融数据的厚尾效应，建议在代码中使用：$$ \text{Loss} = \text{MSE}(y_{pred}, y_{true}) + \lambda \cdot \text{L1}(y_{pred}, y_{true}) $$（混合 MSE 和 L1 损失，增加模型抗噪能力）。
+邻接矩阵验证： 在训练前，让 Agent 画出邻接矩阵的稀疏结构图（Heatmap），直观检查是否形成了明显的“簇状”连接。
+
+邻接矩阵构建脚本（已完成）：
+根据已有的 100个节点元数据（包含经纬度和聚类 ID），构建一个用于 ST-GCN 的稀疏邻接矩阵 $A$。1. 输入需求：读取 processed_nodes.csv，包含列：latitude, longitude, physical_cluster。设定参数 dist_threshold = 150.0 (km)，sigma = 50.0 (用于距离衰减)。2. 构建逻辑：初始化： 创建一个形状为 $(865, 865)$ 的全零矩阵。Haversine 距离计算： 计算所有节点对之间的地理距离（单位：km）。权重分配：Rule 1 (Intra): 如果 node_i 和 node_j 属于同一个 physical_cluster，设置 $w_{ij} = 1.0$。Rule 2 (Inter): 如果不属于同一簇，且 $d_{ij} < dist\_threshold$，设置 $w_{ij} = \exp(-d_{ij} / sigma)$。Rule 3 (Self-loop): 对角线元素 $w_{ii}$ 统一设为 $1.0$。稀疏化处理： 将权重小于 $0.1$ 的值强制设为 $0$，以增加稀疏度。3. 拉普拉斯归一化 (Laplacian Normalization)：计算度矩阵 $D$（每行的权重和）。执行 $\tilde{A} = D^{-1/2} \cdot A \cdot D^{-1/2}$。注意数值稳定性： 计算 $D^{-1/2}$ 时，若度数为 0，请将其处理为 0 以避免除以零错误。4. 代码实现要求：优先使用 scipy.sparse 进行矩阵运算。最终输出两个版本：一个是 scipy.sparse.csr_matrix 格式保存为 .npz；另一个是转换为 torch.sparse_coo_tensor 供模型直接调用。可视化： 请绘制邻接矩阵的稀疏热力图（Heatmap），直观展示簇内和簇间的连接密度。
+写完代码后，请检查生成的矩阵中非零元素的占比（Density）。
+如果 Density > 10%，说明你的 dist_threshold 设得太大了，建议调小，否则我的 5070 Ti 的显存压力依然会很大。
+

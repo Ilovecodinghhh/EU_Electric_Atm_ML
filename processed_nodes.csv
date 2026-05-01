@@ -1,0 +1,101 @@
+name,country,latitude,longitude,capacity_mw,physical_cluster
+Gemini,NLD,54.036,5.963,600.0,0
+BARD Offshore 1,DEU,54.36,5.98,400.0,0
+Global Tech I,DEU,54.509,6.367,400.0,0
+Anholt,DNK,56.603,11.209,399.6,11
+UW Bertikow,DEU,53.2641,14.048,340.0,12
+Borkum Riffgrund I,DEU,53.9667,6.55,312.0,0
+Amrumbank West,DEU,54.5,7.7999,301.32,0
+OWP Nordsee Ost,DEU,54.445,7.683,295.2,0
+Baltic 2,DEU,54.983,13.162,288.0,13
+Butendiek,DEU,55.019,7.774,288.0,0
+Meerwind SüdIOst,DEU,54.392,7.704,288.0,0
+Offshore Windfarm Danysk,DEU,55.1416,7.1945,284.4,0
+Gode Wind 1 - Teil 1,DEU,54.041,6.994,263.1,0
+Northeast Binnendijks,NLD,52.588,4.223,217.5,1
+Northwind,BEL,51.6186,2.8998,216.0,2
+Westereems,NLD,53.4375,6.8613,213.3,0
+Horns Rev B,DNK,55.6,7.5825,209.3,0
+Roedsand 2,DNK,54.5228,11.5447,207.0,3
+Trianel Windpark Borkum,DEU,54.0416,6.4667,200.0,0
+Windpark Reußenköge,DEU,54.6409,9.0139,189.312,14
+Thorntonbank - C-Power - Area SW,BEL,51.54,2.921,177.6,2
+Belwind Phase 1,BEL,51.66,2.8,171.0,2
+SWM Wind Havelland GmbH & Co. KG,DEU,52.3869,12.5636,171.0,4
+Roedsand 1,DNK,54.54,11.715,165.6,3
+Horns Rev A,DNK,55.5297,7.9062,160.0,0
+Smola,NOR,63.4106,7.9099,160.0,15
+Thorntonbank - C-Power - Area NE,BEL,51.556,2.9689,147.6,2
+Outside the Northeast,NLD,38.0211,-87.5172,144.0,16
+Windpark Fehmarn,DEU,54.4856,11.1097,143.0,3
+Luchterduinen,NLD,52.405,4.1619,129.0,1
+Princess Amalia,NLD,52.588,4.223,120.0,1
+Windpark Arneburg 2,DEU,52.7002,11.9387,117.0,4
+Windpark Druxberge,DEU,52.1651,11.2742,116.7,4
+Windpark Riffgat,DEU,53.692,6.475,113.4,0
+Egmond aan Zee,NLD,52.6061,4.4188,108.0,1
+Windparks Biere und Borne,DEU,51.9605,11.6207,94.5,4
+Windpark Hüselitz,DEU,52.5174,11.7882,92.4,4
+Windpark Klettwitz,DEU,51.5452,13.8652,89.1,17
+Salles-Curan,FRA,44.1597,2.8299,87.0,8
+Knockacummer 1,IRL,52.2788,-9.0988,87.0,5
+Mount Lucas,IRL,53.2811,-7.2207,84.0,5
+Windpark Hakenstedt,DEU,52.1663,11.2847,82.7,4
+Bürgerwindpark im Kirchspiel Medelby,DEU,54.7776,9.1334,82.23,18
+Windvision Estinnes WIND,BEL,50.4116,4.0804,80.0,19
+Épizon,FRA,48.3735,5.3222,80.0,20
+Delfzijl Zuid,NLD,53.33,6.9181,78.2,0
+Windpark Dahme,DEU,51.8686,13.5491,76.5,21
+Germinon,FRA,48.8867,4.1786,75.0,6
+Hog Jare,NOR,58.6464,5.7483,74.0,22
+Meentycat,IRL,54.8702,-7.8562,72.0,23
+Klim Fjordholme,DNK,57.0599,9.1563,67.2,24
+Boggeragh 2,IRL,52.0396,-8.9154,66.7,5
+Cormainville,FRA,48.1207,1.616,60.0,7
+Derrybrien,IRL,53.0937,-8.6095,60.0,5
+Murat-sur-Vèbre,FRA,43.6588,2.8709,59.1,8
+Fakken,NOR,70.1023,20.1077,59.0,25
+Sliabh Bawn,IRL,53.7356,-8.0679,58.0,26
+Bessakerfjellet,NOR,64.2221,10.3721,58.0,27
+Boggeragh,IRL,52.0396,-8.9154,57.0,5
+Villesèque-des-Corbières,FRA,43.0193,2.8696,55.31,28
+Hitra,NOR,63.526,8.7793,55.0,29
+Lisheen,IRL,52.7589,-7.7167,54.0,5
+Allonnes,FRA,48.3407,1.676,52.275,7
+Kjollefjord,NOR,70.9217,27.2541,50.0,30
+Gourgançon,FRA,48.6674,4.0369,48.0,6
+Bindoo,IRL,54.0108,-7.1142,48.0,31
+Saint-Georges-sur-Arnon,FRA,46.9823,2.0734,46.0,32
+Cloghboola,IRL,52.3454,-9.4513,46.0,5
+Hundhammerfjelle,NOR,64.7554,11.3764,46.0,33
+Kilgarvan,IRL,51.9342,-9.3269,45.0,5
+Grov,NOR,61.8243,8.9741,45.0,34
+Knocknagoum,IRL,52.3412,-9.5676,44.5,5
+Koegorspolder,NLD,51.3358,3.8278,44.0,2
+Fruges,FRA,50.5099,2.0677,43.1,9
+Garracummer,IRL,52.642,-8.1479,42.5,5
+Ballywater,IRL,52.5387,-6.2396,42.0,10
+Castledockrell,IRL,52.5898,-6.6391,41.4,10
+Coomacheo,IRL,52.0174,-9.1545,41.4,5
+Havoygavlen,NOR,71.0109,24.5824,40.0,35
+Bruckana,IRL,52.7846,-7.6688,39.6,5
+Gueschart,FRA,50.2388,1.9886,38.0,9
+Kill Hill,IRL,52.5394,-7.7745,36.8,5
+Raheenleagh Wind Farm,IRL,52.7973,-6.3164,36.5,10
+Les Grandes-Chapelles,FRA,48.4837,4.0087,36.3,6
+Aumelas,FRA,43.5319,3.6133,36.0,8
+Champfleury,FRA,48.6299,4.0391,36.0,6
+Louville-la-Chenard,FRA,48.3358,1.7911,36.0,7
+Tournoisis,FRA,48.0009,1.6034,36.0,7
+Nygardsfjellet,NOR,68.5078,17.8764,36.0,36
+Poinville,FRA,48.1746,1.9099,35.75,7
+Allibaudières,FRA,48.6071,4.1483,35.0,6
+Ortillon,FRA,48.4931,4.2335,35.0,6
+Quesnoy-sur-Airaines,FRA,49.9359,1.9961,34.5,9
+Mountain Lodge,IRL,53.9955,-7.119,34.5,37
+Roye,FRA,49.6727,2.7927,34.0,9
+Vitry-la-Ville,FRA,48.8249,4.4015,34.0,6
+Monaincha Bog (Gate 3),IRL,52.9348,-7.7054,32.55,5
+Glenough,IRL,52.6386,-8.0786,32.5,5
+Barranafaddock,IRL,52.179,-8.091,32.4,5
+Ally,FRA,45.1733,3.3009,31.5,38
