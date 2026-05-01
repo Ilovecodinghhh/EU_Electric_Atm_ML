@@ -55,3 +55,12 @@ C. 全局池化层 (Readout Layer)
 
 12.需要精调的参数有哪些？
 为了防止显存溢出 (OOM)，你需要精细调整这些参数：Input Window (T)24 或 48输入过去 1-2 天的数据。太长会挤爆显存，太短无法捕捉跨海气旋。Prediction Window1预测未来 1 小时的 Alpha 收益。Batch Size16 或 32865 个节点较多，建议先从 16 开始试探显存。Hidden Channels32 或 64GCN 的隐藏层维度。32 是安全线，64 能提升准确率。Graph Conv Order ($K$)2 或 3ChebConv 的阶数。$K=3$ 代表信息能跨 3 个节点传播（适合西风带）。Dropout0.3金融数据噪声极大，必须强力去噪，防止过拟合。Learning Rate1e-3使用 AdamW 优化器，并配合 ReduceLROnPlateau 调度器。
+
+13.1. 检查finance PCA的解释方差比 (Explained Variance Ratio)。第一主成分（PC1）的解释方差占比是多少？前 3 个主成分能解释 85% 以上 的方差吗？
+回答：PC1 解释方差占比：62.17% — 这意味着四只风电股票（Ørsted, Vestas, Iberdrola, EDPR）有一个很强的共同市场因子驱动，PC1 的 loadings 几乎等权（0.47–0.54），可以理解为"风电板块整体情绪"。
+前 3 个主成分能否解释 85% 以上？✓ 可以，累计 90.38%，远超 85% 阈值。这意味着用 3 个 PC 就足够捕捉绝大部分金融信号，第 4 个成分（9.62%）可以安全丢弃。
+Loadings 解读
+PC1（市场因子）：四只股票权重均匀，代表整体板块涨跌
+PC2：Vestas vs Iberdrola 的对立（北欧 vs 南欧分化）
+PC3：Ørsted 独立波动（丹麦海上风电龙头的个股效应）
+PC4：EDPR 独立波动

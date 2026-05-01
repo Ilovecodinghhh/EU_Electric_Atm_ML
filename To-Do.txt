@@ -1,1 +1,27 @@
-1. 检查finance PCA的解释方差比 (Explained Variance Ratio)。第一主成分（PC1）的解释方差占比是多少？前 3 个主成分能解释 85% 以上 的方差吗？
+Prompt: 多模态时空特征张量集成与数据加载器构建任务目标：
+请编写一个 Python 脚本，将气象、电力、金融和节点元数据集成一个适合 ST-GCN 训练的高维张量，并构建高效的 Data Loader。
+1. 输入数据准备：nodes_df: 包含 physical_cluster, latitude, longitude, capacity_m, country。weather_np: 形状为 (52585, 865, 5) 的 NumPy 数组。price_df: 各国小时级电价数据。finance_pca_np: 形状为 (52585, 3) 的全局股票主成分数据。
+2. 核心处理逻辑：特征工程：
+对 capacity_m 进行 $\log(x + 1)$ 处理后执行 Z-score。
+对经纬度进行 Min-Max 归一化。
+将 finance_pca_np 广播（Broadcast）至所有 865 个节点。
+根据 nodes_df['country'] 将对应国家的电价填充到每个节点的特征中。
+添加时间周期特征：使用 $\sin(2\pi \cdot \text{hour}/24)$ 和 $\cos(2\pi \cdot \text{hour}/24)$。
+张量拼接： 最终合成形状为 (Total_Time, 865, F) 的主特征矩阵。
+邻接矩阵构建：创建一个 $865 \times 865$ 的稀疏矩阵。
+同簇节点（physical_cluster 一致）权重设为 1.0。
+非同簇节点但距离在 100km 内的，按距离衰减计算权重。
+使用 scipy.sparse.csr_matrix 保存以节省内存。
+滑动窗口 Dataset：使用 PyTorch Dataset 封装。window_size = 168 (7天), stride = 6。
+X: 过去 168 小时的特征；y: 未来第 24 小时的 Global Stock PC1 变化率。
+3. 显存优化要求 (RTX 5070 Ti 12GB)：
+使用 numpy.memmap 或 torch.utils.data.IterableDataset 如果内存不足。
+簇级采样 (ClusterGCN / Subgraph Sampling) 
+改善逻辑： 如果 865 个点跑不动，聚类后你可以采用 ClusterGCN 策略。每次只抽取 2-3 个簇（比如 200 个点）进行一次训练步。
+确保 y 标签的计算不产生数据泄露（不要在滑动窗口中包含未来信息）。
+提供一个 check_vram_usage() 函数，估算单次 Batch (size=16) 下的显存占用。
+4. 输出结果：返回 train_loader, val_loader, test_loader 以及 adjacency_matrix (Tensor)。
+训练前的温馨提示Target 的平稳性： 在预测股票 PCA 时，建议预测 $\Delta PCA$ (一阶差分)。
+因为 PCA 绝对值可能具有趋势性，不利于模型收敛。
+损失函数建议： 考虑到金融数据的厚尾效应，建议在代码中使用：$$ \text{Loss} = \text{MSE}(y_{pred}, y_{true}) + \lambda \cdot \text{L1}(y_{pred}, y_{true}) $$（混合 MSE 和 L1 损失，增加模型抗噪能力）。
+邻接矩阵验证： 在训练前，让 Agent 画出邻接矩阵的稀疏结构图（Heatmap），直观检查是否形成了明显的“簇状”连接。
