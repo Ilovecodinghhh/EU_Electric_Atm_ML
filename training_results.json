@@ -1,0 +1,21 @@
+{
+  "naive_mse": 1.459595799446106,
+  "test_loss": 1.4813752159984275,
+  "improvement_pct": -1.492154598236084,
+  "best_val_loss": 0.9389240718023344,
+  "epochs_run": 20,
+  "n_params": 199300,
+  "config": {
+    "device": "cuda",
+    "epochs": 100,
+    "batch_size": 16,
+    "lr": 0.001,
+    "hidden_dim": 64,
+    "n_blocks": 3,
+    "dropout": 0.3,
+    "patience": 15,
+    "cluster_gcn": false,
+    "n_sample_clusters": 3,
+    "dry_run": false
+  }
+}

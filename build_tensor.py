@@ -118,7 +118,7 @@ def main():
     print("=" * 60)
 
     # ── 1. Load node metadata ──────────────────────────────────────
-    nodes = pd.read_csv("processed_nodes.csv")
+    nodes = pd.read_csv("data/processed_nodes.csv")
     node_names = nodes["name"].tolist()
     countries = nodes["country"].values
     clusters = nodes["physical_cluster"].values

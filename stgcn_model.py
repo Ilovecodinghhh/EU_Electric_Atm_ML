@@ -364,7 +364,8 @@ class STGCNTrainer:
 
             self.optimizer.zero_grad()
 
-            with autocast(self.device, enabled=(self.device == "cuda")):
+            # Note: autocast disabled because sparse operations don't support float16 on CUDA
+            with autocast(self.device, enabled=False):
                 pred = self.model(X_batch, A_used)
                 # If predicting 3 PCs but target is only ΔPC1 (scalar)
                 if pred.shape[-1] > 1 and y_batch.dim() == 1:
