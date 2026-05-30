@@ -33,5 +33,7 @@
   "test_start": "2024-07-01 00:00:00",
   "n_train": 43824,
   "n_val": 4368,
-  "n_test": 4393
+  "n_test": 4393,
+  "finance_feature_lag": "previous_trading_close",
+  "target_source": "realized_finance_pc1"
 }

@@ -1,0 +1,83 @@
+{
+  "finance": {
+    "path": "data\\Finance20192024\\raw_finance.csv",
+    "columns": [
+      "ORSTED.CO",
+      "VWS.CO",
+      "IBE.MC",
+      "EDPR.LS"
+    ],
+    "rows": 1542,
+    "start": "2019-01-02 00:00:00+00:00",
+    "end": "2024-12-30 00:00:00+00:00",
+    "missing_by_column": {
+      "ORSTED.CO": 41,
+      "VWS.CO": 41,
+      "IBE.MC": 6,
+      "EDPR.LS": 5
+    }
+  },
+  "nodes": {
+    "rows": 100,
+    "countries": [
+      "BEL",
+      "DEU",
+      "DNK",
+      "FRA",
+      "IRL",
+      "NLD",
+      "NOR"
+    ],
+    "capacity_mw_min": 31.5,
+    "capacity_mw_max": 600.0,
+    "clusters": 39,
+    "assumption": "processed_nodes.csv is an ex-post top-capacity universe. Historical commissioning/investability dates are not encoded, so survivorship and availability bias remain research risks."
+  },
+  "hourly": {
+    "price_top100_2019-01-01_2024-12-31.csv": {
+      "rows": 52585,
+      "columns": 100,
+      "start": "2019-01-01 00:00:00+00:00",
+      "end": "2024-12-31 00:00:00+00:00",
+      "missing_cells": 0,
+      "missing_pct": 0.0
+    },
+    "ssr_top100_2019-01-01_2024-12-31.csv": {
+      "rows": 52585,
+      "columns": 100,
+      "start": "2019-01-01 00:00:00+00:00",
+      "end": "2024-12-31 00:00:00+00:00",
+      "missing_cells": 0,
+      "missing_pct": 0.0
+    },
+    "t2m_top100_2019-01-01_2024-12-31.csv": {
+      "rows": 52585,
+      "columns": 100,
+      "start": "2019-01-01 00:00:00+00:00",
+      "end": "2024-12-31 00:00:00+00:00",
+      "missing_cells": 0,
+      "missing_pct": 0.0
+    },
+    "u100_top100_2019-01-01_2024-12-31.csv": {
+      "rows": 52585,
+      "columns": 100,
+      "start": "2019-01-01 00:00:00+00:00",
+      "end": "2024-12-31 00:00:00+00:00",
+      "missing_cells": 0,
+      "missing_pct": 0.0
+    },
+    "v100_top100_2019-01-01_2024-12-31.csv": {
+      "rows": 52585,
+      "columns": 100,
+      "start": "2019-01-01 00:00:00+00:00",
+      "end": "2024-12-31 00:00:00+00:00",
+      "missing_cells": 0,
+      "missing_pct": 0.0
+    }
+  },
+  "timestamp_policy": {
+    "finance_features": "Must be lagged to previous trading close before model input.",
+    "targets": "Must have target_time strictly after window_end.",
+    "scalers": "Must be fit only on each fold's training period."
+  }
+}

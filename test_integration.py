@@ -31,7 +31,8 @@ TINY_WINDOW = 24
 TINY_HORIZON = 24
 samples = []
 for start in range(0, 300, 60):
-    y_idx = start + TINY_WINDOW - 1 + TINY_HORIZON
+    # target[t] stores the delta from t to t + horizon, so use window_end.
+    y_idx = start + TINY_WINDOW - 1
     if y_idx < T_total and np.isfinite(target[y_idx]):
         X = np.array(tensor[start:start + TINY_WINDOW], dtype=np.float32)
         y = target[y_idx]

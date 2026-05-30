@@ -269,9 +269,12 @@ def get_cosine_warmup_scheduler(optimizer, warmup_epochs, total_epochs,
                                  min_lr=1e-6, base_lr=1e-3):
     """Cosine annealing with linear warmup."""
     def lr_lambda(epoch):
-        if epoch < warmup_epochs:
+        if warmup_epochs > 0 and epoch < warmup_epochs:
             return epoch / warmup_epochs
+        if total_epochs <= warmup_epochs:
+            return 1.0
         progress = (epoch - warmup_epochs) / (total_epochs - warmup_epochs)
+        progress = min(max(progress, 0.0), 1.0)
         return max(min_lr / base_lr,
                    0.5 * (1 + math.cos(math.pi * progress)))
     return LambdaLR(optimizer, lr_lambda)
@@ -407,6 +410,42 @@ class STGCNTrainer:
 
         return total_loss / max(n_batches, 1)
 
+    @torch.no_grad()
+    def evaluate_mse(self, loader):
+        """Pure MSE evaluation for apples-to-apples baseline comparison."""
+        self.model.eval()
+        total_sse = 0.0
+        n_obs = 0
+
+        for X_batch, y_batch in loader:
+            X_batch = X_batch.to(self.device)
+            y_batch = y_batch.to(self.device)
+
+            pred = self.model(X_batch, self.A_norm)
+            if pred.shape[-1] > 1 and y_batch.dim() == 1:
+                pred = pred[:, 0]
+            total_sse += F.mse_loss(pred, y_batch, reduction="sum").item()
+            n_obs += y_batch.numel()
+
+        return total_sse / max(n_obs, 1)
+
+    @torch.no_grad()
+    def predict(self, loader):
+        """Return numpy arrays of PC1 predictions and targets."""
+        self.model.eval()
+        preds = []
+        targets = []
+
+        for X_batch, y_batch in loader:
+            X_batch = X_batch.to(self.device)
+            pred = self.model(X_batch, self.A_norm)
+            if pred.shape[-1] > 1 and y_batch.dim() == 1:
+                pred = pred[:, 0]
+            preds.append(pred.detach().cpu().numpy())
+            targets.append(y_batch.numpy())
+
+        return np.concatenate(preds), np.concatenate(targets)
+
     def train(self):
         print(f"\n{'='*60}")
         print(f"  Training ST-GCN | {self.epochs} epochs | device={self.device}")
@@ -444,8 +483,10 @@ class STGCNTrainer:
         self.model.load_state_dict(torch.load("best_stgcn.pt",
                                                weights_only=True))
         test_loss = self.evaluate(self.test_loader)
+        test_mse = self.evaluate_mse(self.test_loader)
         print(f"\n  Best Val Loss:  {self.best_val_loss:.6f}")
         print(f"  Test Loss:      {test_loss:.6f}")
+        print(f"  Test MSE:       {test_mse:.6f}")
         return test_loss
 
     def benchmark_naive(self, loader):

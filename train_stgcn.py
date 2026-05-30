@@ -12,7 +12,9 @@ Usage:
 import argparse
 import json
 import os
+import random
 import numpy as np
+import pandas as pd
 import torch
 from torch.utils.data import Dataset, DataLoader
 
@@ -28,6 +30,22 @@ N_NODES = 100
 # ────────────────────────────────────────────────────────────────────
 
 
+def set_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+
+
+def seed_worker(worker_id):
+    worker_seed = torch.initial_seed() % 2**32
+    random.seed(worker_seed)
+    np.random.seed(worker_seed)
+
+
 class STGCNWindowDataset(Dataset):
     """Sliding window dataset reading from memmap."""
     def __init__(self, tensor_memmap, target, start_idx, end_idx,
@@ -37,11 +55,13 @@ class STGCNWindowDataset(Dataset):
         self.window_size = window_size
         self.horizon = horizon
 
+        # Keep window_end + horizon inside this split. target[t] already stores
+        # the delta from t to t + horizon, so samples read target[window_end].
         max_start = end_idx - window_size - horizon + 1
         min_start = max(start_idx, 0)
         self.indices = []
         for i in range(min_start, max_start + 1, stride):
-            y_idx = i + window_size - 1 + horizon
+            y_idx = i + window_size - 1
             if y_idx < len(target) and np.isfinite(target[y_idx]):
                 self.indices.append(i)
 
@@ -51,7 +71,7 @@ class STGCNWindowDataset(Dataset):
     def __getitem__(self, idx):
         t = self.indices[idx]
         X = np.array(self.tensor[t:t + self.window_size], dtype=np.float32)
-        y_idx = t + self.window_size - 1 + self.horizon
+        y_idx = t + self.window_size - 1
         y = self.target[y_idx]
         return torch.from_numpy(X), torch.tensor(y, dtype=torch.float32)
 
@@ -60,18 +80,22 @@ def main():
     parser = argparse.ArgumentParser(description="Train ST-GCN")
     parser.add_argument("--device", default="cuda", choices=["cuda", "cpu"])
     parser.add_argument("--epochs", type=int, default=100)
-    parser.add_argument("--batch_size", type=int, default=16)
-    parser.add_argument("--lr", type=float, default=1e-3)
+    parser.add_argument("--batch_size", type=int, default=32)
+    parser.add_argument("--lr", type=float, default=2e-3)
     parser.add_argument("--hidden_dim", type=int, default=64)
     parser.add_argument("--n_blocks", type=int, default=3)
     parser.add_argument("--dropout", type=float, default=0.3)
     parser.add_argument("--patience", type=int, default=15)
+    parser.add_argument("--seed", type=int, default=11)
+    parser.add_argument("--output_dir", default="quant_output")
     parser.add_argument("--cluster_gcn", action="store_true",
                         help="Enable ClusterGCN subgraph sampling")
     parser.add_argument("--n_sample_clusters", type=int, default=3)
     parser.add_argument("--dry_run", action="store_true",
                         help="Run 2 epochs with small batches for testing")
     args = parser.parse_args()
+    set_seed(args.seed)
+    os.makedirs(args.output_dir, exist_ok=True)
 
     if args.device == "cuda" and not torch.cuda.is_available():
         print("  CUDA not available, falling back to CPU")
@@ -82,6 +106,8 @@ def main():
         meta = json.load(f)
     T_total, N, F = meta["shape"]
     print(f"Tensor: ({T_total}, {N}, {F})")
+    time_index = pd.read_csv(os.path.join(TENSOR_DIR, "time_index.csv"),
+                             parse_dates=["timestamp"])["timestamp"]
 
     # ── Load tensors ───────────────────────────────────────────────
     print("Loading feature tensor (memmap)...")
@@ -115,14 +141,19 @@ def main():
 
     bs = 4 if args.dry_run else args.batch_size
     epochs = 2 if args.dry_run else args.epochs
+    generator = torch.Generator()
+    generator.manual_seed(args.seed)
 
     train_loader = DataLoader(train_ds, batch_size=bs, shuffle=True,
                                num_workers=2, pin_memory=(args.device == "cuda"),
-                               drop_last=True)
+                               drop_last=True, worker_init_fn=seed_worker,
+                               generator=generator)
     val_loader = DataLoader(val_ds, batch_size=bs, shuffle=False,
-                             num_workers=2, pin_memory=(args.device == "cuda"))
+                             num_workers=2, pin_memory=(args.device == "cuda"),
+                             worker_init_fn=seed_worker)
     test_loader = DataLoader(test_ds, batch_size=bs, shuffle=False,
-                              num_workers=2, pin_memory=(args.device == "cuda"))
+                              num_workers=2, pin_memory=(args.device == "cuda"),
+                              worker_init_fn=seed_worker)
 
     # ── Model ──────────────────────────────────────────────────────
     model = STGCNModel(
@@ -139,8 +170,7 @@ def main():
     # ── ClusterGCN (optional) ──────────────────────────────────────
     cluster_sampler = None
     if args.cluster_gcn:
-        import pandas as pd
-        nodes = pd.read_csv("processed_nodes.csv")
+        nodes = pd.read_csv("data/processed_nodes.csv")
         cluster_sampler = ClusterGCNSampler(
             nodes["physical_cluster"].values, A_norm,
             n_sample_clusters=args.n_sample_clusters
@@ -171,14 +201,17 @@ def main():
 
     # ── Train ──────────────────────────────────────────────────────
     test_loss = trainer.train()
+    test_mse = trainer.evaluate_mse(test_loader)
+    pred, y_true = trainer.predict(test_loader)
 
     # ── Compare ────────────────────────────────────────────────────
-    improvement = (1 - test_loss / naive_mse) * 100
+    improvement = (1 - test_mse / naive_mse) * 100
     print(f"\n{'='*60}")
     print(f"  RESULTS")
     print(f"{'='*60}")
     print(f"  Naive MSE:     {naive_mse:.6f}")
-    print(f"  Model Loss:    {test_loss:.6f}")
+    print(f"  Model Loss:    {test_loss:.6f}  (hybrid training metric)")
+    print(f"  Model MSE:     {test_mse:.6f}")
     print(f"  Improvement:   {improvement:+.2f}%")
     if improvement > 5:
         print(f"  ✓ Model beats naive by >{5}%!")
@@ -186,14 +219,30 @@ def main():
         print(f"  ✗ Model does not beat naive by 5% (needs more tuning)")
     print(f"{'='*60}")
 
+    test_window_end_idx = np.array([i + WINDOW_SIZE - 1 for i in test_ds.indices])
+    pred_df = pd.DataFrame({
+        "window_end_idx": test_window_end_idx,
+        "window_end": time_index.iloc[test_window_end_idx].astype(str).values,
+        "target_idx": test_window_end_idx + HORIZON,
+        "target_time": time_index.iloc[test_window_end_idx + HORIZON].astype(str).values,
+        "y_true": y_true,
+        "y_pred": pred,
+        "model": "stgcn",
+        "seed": args.seed,
+    })
+    prediction_path = os.path.join(args.output_dir, "stgcn_predictions.csv")
+    pred_df.to_csv(prediction_path, index=False)
+
     # Save results
     results = {
         "naive_mse": float(naive_mse),
         "test_loss": float(test_loss),
+        "test_mse": float(test_mse),
         "improvement_pct": float(improvement),
         "best_val_loss": float(trainer.best_val_loss),
         "epochs_run": len(trainer.history["train_loss"]),
         "n_params": n_params,
+        "prediction_path": prediction_path,
         "config": vars(args)
     }
     with open("training_results.json", "w") as f:

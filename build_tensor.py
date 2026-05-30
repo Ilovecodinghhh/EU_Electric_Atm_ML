@@ -42,7 +42,7 @@ WINDOW_SIZE = 168        # 7 days of hourly data
 HORIZON = 24             # predict 24h ahead
 STRIDE = 6              # sliding window stride
 BATCH_SIZE = 16
-NUM_WORKERS = 2          # DataLoader workers
+NUM_WORKERS = 0          # Local Dataset in this builder is not picklable on Windows
 N_NODES = 100
 N_FEATURES = 16
 TRAIN_END = "2023-12-31 23:00:00"   # inclusive
@@ -66,10 +66,15 @@ def load_hourly_csv(filename):
     return df
 
 
-def build_finance_pca_hourly(time_index):
+def build_finance_pca_hourly(time_index, train_end_ts):
     """
     Build hourly finance PCA features + is_market_open indicator.
-    Returns: pca_hourly (T, 3), is_open (T,), pca_daily (for target)
+    Returns:
+      pca_feature_arr: lagged PCA available as of each hour (T, 3)
+      pca_realized_arr: same-date PCA used only for targets (T, 3)
+      is_open: trading-date indicator (T,)
+      pca_daily: realized daily PCA
+      pca_params: fitted train-only finance parameters
     """
     # Load raw finance
     fin = pd.read_csv(os.path.join(DATA_DIR, "Finance20192024", "raw_finance.csv"),
@@ -80,36 +85,62 @@ def build_finance_pca_hourly(time_index):
     # Log returns for PCA
     log_ret = np.log(fin / fin.shift(1)).dropna()
 
-    # Fit PCA on all data (3 components)
+    # Fit scaler/PCA on train-period returns only, then transform all periods.
+    # This avoids leaking validation/test covariance structure into features.
+    train_ret_mask = log_ret.index <= train_end_ts
+    if not train_ret_mask.any():
+        raise ValueError("No finance returns found in the configured training period")
+
     scaler_fin = StandardScaler()
-    ret_scaled = scaler_fin.fit_transform(log_ret)
+    ret_train_scaled = scaler_fin.fit_transform(log_ret.loc[train_ret_mask])
+    ret_scaled = scaler_fin.transform(log_ret)
+
     pca = PCA(n_components=3)
-    pca_values = pca.fit_transform(ret_scaled)  # (n_trading_days, 3)
-    print(f"  Finance PCA explained variance: {pca.explained_variance_ratio_.round(4)}")
+    pca.fit(ret_train_scaled)
+    pca_values = pca.transform(ret_scaled)  # (n_trading_days, 3)
+    print(f"  Finance PCA train explained variance: {pca.explained_variance_ratio_.round(4)}")
 
     # Create daily PCA DataFrame
     pca_daily = pd.DataFrame(pca_values, index=log_ret.index,
                               columns=["pc1", "pc2", "pc3"])
+    pca_by_date = pca_daily.copy()
+    pca_by_date.index = pca_by_date.index.normalize()
 
     # Build is_market_open: 1 for trading days
-    trading_dates = set(pca_daily.index.normalize())
+    trading_dates = set(pca_by_date.index)
 
-    # Reindex to hourly, forward-fill
+    # Reindex realized PCA to hourly for target construction.
     hourly_dates = pd.DatetimeIndex(time_index)
-    pca_hourly = pca_daily.reindex(hourly_dates.normalize())
-    # For dates before first trading day, backfill
-    pca_hourly = pca_hourly.ffill().bfill()
-    pca_hourly.index = hourly_dates
+    hourly_norm = hourly_dates.normalize()
+    pca_realized_hourly = pca_by_date.reindex(hourly_norm)
+    pca_realized_hourly = pca_realized_hourly.ffill()
+    pca_realized_hourly.index = hourly_dates
+
+    # Feature PCA is strictly lagged by one available trading close.
+    # For date D, this uses the PCA return from the previous trading date,
+    # never the same-date close. Initial unavailable rows are neutral zeros.
+    pca_lagged_daily = pca_by_date.shift(1)
+    pca_feature_hourly = pca_lagged_daily.reindex(hourly_norm)
+    pca_feature_hourly = pca_feature_hourly.ffill().fillna(0.0)
+    pca_feature_hourly.index = hourly_dates
 
     # is_market_open
     is_open = np.array([1.0 if ts.normalize() in trading_dates else 0.0
                         for ts in hourly_dates], dtype=np.float32)
 
-    # Z-score the 3 PCs (fit on training period only will be done later;
-    # here we compute global for simplicity, caller can re-fit on train)
-    pca_arr = pca_hourly.values.astype(np.float32)
+    pca_feature_arr = pca_feature_hourly.values.astype(np.float32)
+    pca_realized_arr = pca_realized_hourly.values.astype(np.float32)
 
-    return pca_arr, is_open, pca_daily
+    pca_params = {
+        "finance_return_mean": scaler_fin.mean_.astype(np.float32),
+        "finance_return_scale": scaler_fin.scale_.astype(np.float32),
+        "finance_pca_components": pca.components_.astype(np.float32),
+        "finance_pca_mean": pca.mean_.astype(np.float32),
+        "finance_pca_explained_variance_ratio": pca.explained_variance_ratio_.astype(np.float32),
+        "finance_pca_feature_lag_trading_days": np.array([1], dtype=np.int32),
+    }
+
+    return pca_feature_arr, pca_realized_arr, is_open, pca_daily, pca_params
 
 
 def main():
@@ -164,15 +195,16 @@ def main():
     del price_df, ssr_df, t2m_df, u100_df, v100_df
     gc.collect()
 
-    # ── 3. Finance PCA + is_market_open ────────────────────────────
-    print("\nBuilding finance PCA features...")
-    pca_arr, is_open, pca_daily = build_finance_pca_hourly(common_idx)
-
-    # ── 4. Determine train/val/test split indices ──────────────────
+    # ── 3. Determine train/val/test split indices ──────────────────
     train_end_ts = pd.Timestamp(TRAIN_END, tz="UTC")
     val_start_ts = pd.Timestamp(VAL_START, tz="UTC")
     val_end_ts   = pd.Timestamp(VAL_END, tz="UTC")
     test_start_ts = pd.Timestamp(TEST_START, tz="UTC")
+
+    # ── 4. Finance PCA + is_market_open ────────────────────────────
+    print("\nBuilding finance PCA features...")
+    pca_arr, pca_realized_arr, is_open, pca_daily, pca_params = build_finance_pca_hourly(
+        common_idx, train_end_ts)
 
     train_mask = common_idx <= train_end_ts
     val_mask   = (common_idx >= val_start_ts) & (common_idx <= val_end_ts)
@@ -188,7 +220,7 @@ def main():
 
     # ── 5. Feature scaling (fit on TRAIN only) ─────────────────────
     print("\nScaling features (fit on train set only)...")
-    scaler_params = {}
+    scaler_params = dict(pca_params)
 
     # 5a. Weather: global Z-score (across all nodes & train timesteps)
     def global_zscore(arr, name):
@@ -219,15 +251,17 @@ def main():
         scaler_params[f"price_{c}_iqr"] = float(iqr)
     print(f"  ✓ Electricity price: RobustScaler per country ({len(unique_countries)} countries)")
 
-    # 5c. Finance PCA: Z-score per component (fit on train)
+    # 5c. Finance PCA: Z-score per component (fit on train realized PCA)
     for i in range(3):
-        train_pc = pca_arr[train_mask, i]
-        mu = train_pc.mean()
-        sigma = train_pc.std() + 1e-8
+        train_pc = pca_realized_arr[train_mask, i]
+        finite_train_pc = train_pc[np.isfinite(train_pc)]
+        mu = finite_train_pc.mean()
+        sigma = finite_train_pc.std() + 1e-8
         pca_arr[:, i] = (pca_arr[:, i] - mu) / sigma
+        pca_realized_arr[:, i] = (pca_realized_arr[:, i] - mu) / sigma
         scaler_params[f"finance_pc{i+1}_mean"] = float(mu)
         scaler_params[f"finance_pc{i+1}_std"] = float(sigma)
-    print("  ✓ Finance PCA: Z-score per component")
+    print("  ✓ Finance PCA: train-only Z-score; input PCA lagged one trading close")
 
     # 5d. is_market_open: no scaling
     print("  ✓ is_market_open: binary (no scaling)")
@@ -323,10 +357,10 @@ def main():
     # ── 7. Build target vector: ΔPC1 at +24h ──────────────────────
     print("\nBuilding target: ΔPC1 (24h ahead change rate)...")
     # Use the scaled PC1 (feature index 5) — same as pca_arr[:, 0] already Z-scored
-    # Target: (pc1[t+24] - pc1[t]) / (|pc1[t]| + epsilon)
-    # But since PC1 is Z-scored and can be near 0, use simple difference instead
-    # ΔPC1 = pc1_zscore[t + HORIZON] - pc1_zscore[t]
-    pc1 = pca_arr[:, 0]  # already Z-scored
+    # Target convention:
+    #   target_full[t] = pc1_zscore[t + HORIZON] - pc1_zscore[t]
+    # A training window ending at t must therefore read target_full[t].
+    pc1 = pca_realized_arr[:, 0]  # already Z-scored, not input-lagged
     target_full = np.full(T, np.nan, dtype=np.float32)
     target_full[:T - HORIZON] = pc1[HORIZON:] - pc1[:T - HORIZON]
 
@@ -358,6 +392,8 @@ def main():
         "n_train": int(n_train),
         "n_val": int(n_val),
         "n_test": int(n_test),
+        "finance_feature_lag": "previous_trading_close",
+        "target_source": "realized_finance_pc1",
     }
     with open(os.path.join(OUTPUT_DIR, "tensor_meta.json"), "w") as f:
         json.dump(meta, f, indent=2)
@@ -394,9 +430,9 @@ def main():
             max_start = end_idx - window_size - horizon + 1
             min_start = max(start_idx, 0)
             self.indices = list(range(min_start, max_start + 1, stride))
-            # Filter out windows where target is NaN
+            # Filter out windows where the delta starting at window_end is NaN.
             self.indices = [i for i in self.indices
-                           if np.isfinite(target[i + window_size - 1 + horizon])]
+                           if np.isfinite(target[i + window_size - 1])]
 
         def __len__(self):
             return len(self.indices)
@@ -404,8 +440,8 @@ def main():
         def __getitem__(self, idx):
             t = self.indices[idx]
             X = np.array(self.tensor[t:t + self.window_size], dtype=np.float32)
-            # Target: ΔPC1 at (window_end + horizon)
-            y_idx = t + self.window_size - 1 + self.horizon
+            # Target: ΔPC1 from window_end to window_end + horizon
+            y_idx = t + self.window_size - 1
             y = self.target[y_idx]
             return torch.from_numpy(X), torch.tensor(y, dtype=torch.float32)
 
@@ -558,7 +594,7 @@ def write_training_tips():
 ╚══════════════════════════════════════════════════════════════╝
 """
     path = os.path.join(OUTPUT_DIR, "training_tips.txt")
-    with open(path, "w") as f:
+    with open(path, "w", encoding="utf-8") as f:
         f.write(tips)
     print(f"\n  ✓ Training tips saved to {path}")
 
