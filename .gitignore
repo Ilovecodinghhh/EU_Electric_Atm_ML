@@ -2,3 +2,14 @@
 tensor_output/feature_tensor.npy
 tensor_output/target_vector.npy
 tensor_output/time_index.csv
+
+# Large generated cross-sectional panels (regenerate with cross_sectional_evaluate.py)
+quant_output/**/daily_panel.csv
+quant_output/**/train_panel.csv
+quant_output/**/test_panel.csv
+
+# Large row-level generated predictions (keep summary metrics/reports in Git)
+quant_output/**/predictions.csv
+quant_output/**/summary_predictions.csv
+quant_output/**/unique_oos_predictions.csv
+quant_output/**/validation_predictions.csv

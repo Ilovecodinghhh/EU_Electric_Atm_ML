@@ -1,0 +1,72 @@
+ticker,name,country,subsector
+ORSTED.CO,Orsted,DNK,renewable_utility
+VWS.CO,Vestas,DNK,wind_turbine
+CADLR.OL,Cadeler,DNK,offshore_wind_services
+IBE.MC,Iberdrola,ESP,utility
+ELE.MC,Endesa,ESP,utility
+NTGY.MC,Naturgy,ESP,utility
+ANA.MC,Acciona,ESP,renewable_infrastructure
+ANE.MC,Acciona Energia,ESP,renewable_utility
+EDPR.LS,EDP Renovaveis,PRT,renewable_utility
+RWE.DE,RWE,DEU,utility
+ENEL.MI,Enel,ITA,utility
+ENGI.PA,Engie,FRA,utility
+EDP.LS,EDP,PRT,utility
+SSE.L,SSE,GBR,utility
+CNA.L,Centrica,GBR,utility
+DRX.L,Drax,GBR,renewable_utility
+NG.L,National Grid,GBR,grid
+RED.MC,Redeia,ESP,grid
+TRN.MI,Terna,ITA,grid
+SRG.MI,Snam,ITA,grid
+ELI.BR,Elia Group,BEL,grid
+VER.VI,Verbund,AUT,utility
+ANDR.VI,Andritz,AUT,hydro_equipment
+FORTUM.HE,Fortum,FIN,utility
+EOAN.DE,E.ON,DEU,utility
+NDX1.DE,Nordex,DEU,wind_turbine
+ENR.DE,Siemens Energy,DEU,energy_equipment
+SIE.DE,Siemens,DEU,electrification
+SU.PA,Schneider Electric,FRA,electrification
+ABBN.SW,ABB,CHE,electrification
+PRY.MI,Prysmian,ITA,grid_equipment
+LR.PA,Legrand,FRA,electrification
+LAND.SW,Landis+Gyr,CHE,grid_equipment
+IFX.DE,Infineon,DEU,power_semiconductors
+UMI.BR,Umicore,BEL,battery_materials
+AMG.AS,AMG Critical Materials,NLD,battery_materials
+WCH.DE,Wacker Chemie,DEU,solar_materials
+S92.DE,SMA Solar Technology,DEU,solar_equipment
+NKT.CO,NKT,DNK,grid_equipment
+LIGHT.AS,Signify,NLD,energy_efficiency
+ROCK-B.CO,Rockwool,DNK,building_efficiency
+ERG.MI,ERG,ITA,renewable_utility
+SLR.MC,Solaria,ESP,solar
+GRE.MC,Grenergy Renovables,ESP,renewable_developer
+VLTSA.PA,Voltalia,FRA,renewable_developer
+EKT.DE,Energiekontor,DEU,renewable_developer
+ALFEN.AS,Alfen,NLD,grid_storage
+SCATC.OL,Scatec,NOR,solar
+NEL.OL,Nel,NOR,hydrogen
+ITM.L,ITM Power,GBR,hydrogen
+CWR.L,Ceres Power,GBR,hydrogen
+AFC.L,AFC Energy,GBR,hydrogen
+JMAT.L,Johnson Matthey,GBR,hydrogen_materials
+HPUR.OL,Hexagon Purus,NOR,hydrogen_storage
+HEX.OL,Hexagon Composites,NOR,hydrogen_storage
+PNE3.DE,PNE,DEU,renewable_developer
+A2A.MI,A2A,ITA,utility
+ACE.MI,Acea,ITA,utility
+BKW.SW,BKW,CHE,utility
+EQNR.OL,Equinor,NOR,integrated_energy_transition
+TTE.PA,TotalEnergies,FRA,integrated_energy_transition
+REP.MC,Repsol,ESP,integrated_energy_transition
+OMV.VI,OMV,AUT,integrated_energy_transition
+TOM.OL,Tomra Systems,NOR,clean_technology
+VIE.PA,Veolia,FRA,environmental_services
+NIBE-B.ST,Nibe,SWE,heat_pumps
+EOLU-B.ST,Eolus Vind,SWE,renewable_developer
+CEZ.PR,CEZ,CZE,utility
+PGE.WA,PGE,POL,utility
+PEP.WA,Polenergia,POL,renewable_utility
+ZEP.WA,ZE PAK,POL,utility_transition

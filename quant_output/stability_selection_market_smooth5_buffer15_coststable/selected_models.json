@@ -1,0 +1,11 @@
+{
+  "horizon_3d": [
+    "lagged_return_reversal",
+    "ridge_wind_weather_only"
+  ],
+  "horizon_5d": [
+    "lagged_return_reversal",
+    "rolling_momentum_21d",
+    "ridge_wind_weather_only"
+  ]
+}

@@ -1,0 +1,2 @@
+model,n_days,mean_ic,mean_rankic,ic_t_stat,rankic_t_stat,directional_accuracy,gross_pnl,net_pnl,annualized_return,annualized_volatility,sharpe,max_drawdown,mean_turnover,max_abs_net_exposure,max_group_net_exposure
+rolling_momentum_21d,386,0.01419388092138748,0.011154024619635937,1.318783373536849,1.1058593763129918,0.4902294596595115,0.5476050195759662,0.5130335910045377,0.06698676939541114,0.0927013289678423,0.7226085121028694,-0.27709185782067053,0.08956328645447816,0.0,

@@ -1,0 +1,22 @@
+{
+  "prediction_file": "quant_output/stability_selection_market_smooth5_buffer15_coststable\\horizon_3d\\unique_oos_predictions.csv",
+  "horizon_days": 3,
+  "models": [
+    "lagged_return_reversal",
+    "ridge_wind_weather_only"
+  ],
+  "tx_cost_bps": 10.0,
+  "portfolio_group": "none",
+  "portfolio_mode": "buffered",
+  "selection_buffer": 0.15,
+  "periods_per_year": 84.0,
+  "n_boot": 1000,
+  "block_size": 20,
+  "seed": 123,
+  "outputs": {
+    "daily_stats": "quant_output/stat_report_coststable_pruned_3d_buffer15_10bps\\daily_stats.csv",
+    "summary_metrics": "quant_output/stat_report_coststable_pruned_3d_buffer15_10bps\\summary_metrics.csv",
+    "regime_metrics": "quant_output/stat_report_coststable_pruned_3d_buffer15_10bps\\regime_metrics.csv",
+    "bootstrap_ci": "quant_output/stat_report_coststable_pruned_3d_buffer15_10bps\\bootstrap_ci.csv"
+  }
+}

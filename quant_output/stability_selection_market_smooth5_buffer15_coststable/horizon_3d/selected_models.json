@@ -1,0 +1,14 @@
+{
+  "horizon_days": 3,
+  "selected_models": [
+    "lagged_return_reversal",
+    "ridge_wind_weather_only"
+  ],
+  "selection_rules": {
+    "min_positive_rankic_folds": 2,
+    "min_mean_rankic": 0.005,
+    "min_mean_rankic_t": -999.0,
+    "min_net_pnl_sum": 0.0,
+    "min_positive_net_pnl_folds": 0
+  }
+}

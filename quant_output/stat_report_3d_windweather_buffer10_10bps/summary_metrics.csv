@@ -1,0 +1,2 @@
+model,n_days,mean_ic,mean_rankic,ic_t_stat,rankic_t_stat,directional_accuracy,gross_pnl,net_pnl,annualized_return,annualized_volatility,sharpe,max_drawdown,mean_turnover,max_abs_net_exposure,max_group_net_exposure
+ridge_wind_weather_only,386,0.01553824821464053,0.013071824080778529,2.1627733215179146,1.666514489496552,0.5066247224278313,0.30321765768737374,0.17586051483023096,0.03827016384906581,0.06699252261014729,0.5712602296195525,-0.18407727680698738,0.329940784603997,0.0,
