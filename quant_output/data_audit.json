@@ -19,6 +19,15 @@
   },
   "nodes": {
     "rows": 100,
+    "valid_geo_rows": 99,
+    "invalid_geo_nodes": [
+      {
+        "name": "Outside the Northeast",
+        "country": "NLD",
+        "latitude": 38.0211,
+        "longitude": -87.5172
+      }
+    ],
     "countries": [
       "BEL",
       "DEU",
@@ -75,9 +84,52 @@
       "missing_pct": 0.0
     }
   },
+  "electricity_price": {
+    "country_duplicate_series": {
+      "BEL": {
+        "node_count": 5,
+        "unique_price_series": 1,
+        "is_country_level_series": true
+      },
+      "DEU": {
+        "node_count": 24,
+        "unique_price_series": 1,
+        "is_country_level_series": true
+      },
+      "DNK": {
+        "node_count": 6,
+        "unique_price_series": 1,
+        "is_country_level_series": true
+      },
+      "FRA": {
+        "node_count": 23,
+        "unique_price_series": 1,
+        "is_country_level_series": true
+      },
+      "IRL": {
+        "node_count": 23,
+        "unique_price_series": 1,
+        "is_country_level_series": true
+      },
+      "NLD": {
+        "node_count": 9,
+        "unique_price_series": 1,
+        "is_country_level_series": true
+      },
+      "NOR": {
+        "node_count": 10,
+        "unique_price_series": 1,
+        "is_country_level_series": true
+      }
+    },
+    "assumption": "The current price input is country-level, not node-level, because all nodes within the same country often share one identical hourly price series."
+  },
   "timestamp_policy": {
-    "finance_features": "Must be lagged to previous trading close before model input.",
-    "targets": "Must have target_time strictly after window_end.",
-    "scalers": "Must be fit only on each fold's training period."
+    "finance_calendar": "Use observed finance trading dates as the exchange calendar proxy.",
+    "finance_features": "Must be lagged to previous available trading close before model input.",
+    "close_time_rule": "Daily finance observations are treated as available at 23:00 UTC.",
+    "targets": "Must have target_time strictly after window_end and fall on an observed trading date.",
+    "scalers": "Must be fit only on each fold's training period.",
+    "winsorization": "Finance returns and electricity prices should be clipped with train-only 1%/99% quantiles."
   }
 }

@@ -1,0 +1,97 @@
+{
+  "folds": [
+    {
+      "name": "fold_2019_2021_to_2023",
+      "train_end": "2021-12-31 23:59:59",
+      "val_start": "2022-01-01 00:00:00",
+      "val_end": "2022-12-31 23:59:59",
+      "test_start": "2023-01-01 00:00:00",
+      "test_end": "2023-12-31 23:59:59"
+    },
+    {
+      "name": "fold_2019_2022_to_2023h2",
+      "train_end": "2022-12-31 23:59:59",
+      "val_start": "2023-01-01 00:00:00",
+      "val_end": "2023-06-30 23:59:59",
+      "test_start": "2023-07-01 00:00:00",
+      "test_end": "2023-12-31 23:59:59"
+    },
+    {
+      "name": "fold_2019_2023_to_2024h2",
+      "train_end": "2023-12-31 23:59:59",
+      "val_start": "2024-01-01 00:00:00",
+      "val_end": "2024-06-30 23:59:59",
+      "test_start": "2024-07-01 00:00:00",
+      "test_end": "2024-12-31 23:59:59"
+    }
+  ],
+  "tx_cost_bps": 10.0,
+  "pca_meta": {
+    "fold_2019_2021_to_2023": {
+      "columns": [
+        "ORSTED.CO",
+        "VWS.CO",
+        "IBE.MC",
+        "EDPR.LS"
+      ],
+      "explained_variance_ratio": [
+        0.6401051158022157,
+        0.15503468569368697,
+        0.10616551951545264
+      ],
+      "pc1_basket_weights": {
+        "ORSTED.CO": 0.2631555491008818,
+        "VWS.CO": 0.2455497266681349,
+        "IBE.MC": 0.23210752604737367,
+        "EDPR.LS": 0.2591871981836097
+      },
+      "train_end": "2021-12-31 23:59:59+00:00"
+    },
+    "fold_2019_2022_to_2023h2": {
+      "columns": [
+        "ORSTED.CO",
+        "VWS.CO",
+        "IBE.MC",
+        "EDPR.LS"
+      ],
+      "explained_variance_ratio": [
+        0.6551523722700726,
+        0.15650059232252778,
+        0.10014702729709289
+      ],
+      "pc1_basket_weights": {
+        "ORSTED.CO": 0.26702884151585593,
+        "VWS.CO": 0.23845338900151664,
+        "IBE.MC": 0.23136429791576818,
+        "EDPR.LS": 0.26315347156685925
+      },
+      "train_end": "2022-12-31 23:59:59+00:00"
+    },
+    "fold_2019_2023_to_2024h2": {
+      "columns": [
+        "ORSTED.CO",
+        "VWS.CO",
+        "IBE.MC",
+        "EDPR.LS"
+      ],
+      "explained_variance_ratio": [
+        0.63918400579243,
+        0.1607669782847318,
+        0.10512129028825455
+      ],
+      "pc1_basket_weights": {
+        "ORSTED.CO": 0.26512882856692505,
+        "VWS.CO": 0.2369282451711907,
+        "IBE.MC": 0.2322783539879761,
+        "EDPR.LS": 0.2656645722739083
+      },
+      "train_end": "2023-12-31 23:59:59+00:00"
+    }
+  },
+  "outputs": {
+    "summary_metrics": "quant_output\\wind_agg_eval\\summary_metrics.csv",
+    "summary_regime_metrics": "quant_output\\wind_agg_eval\\summary_regime_metrics.csv",
+    "summary_dm_comparison": "quant_output\\wind_agg_eval\\summary_dm_comparison.csv",
+    "stgcn_prediction_metrics": "quant_output\\wind_agg_eval\\stgcn_prediction_metrics.json"
+  }
+}

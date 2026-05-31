@@ -26,19 +26,23 @@ A_norm = torch.load("adjacency_matrix.pt", weights_only=False)
 print(f"Tensor: ({T_total}, {N}, {F})")
 print(f"Adjacency: {A_norm.shape}, nnz={A_norm._nnz()}")
 
-# Tiny dataset: just 5 windows of size 24 from beginning of data
+# Tiny dataset: 5 windows ending at valid target timestamps.
 TINY_WINDOW = 24
 TINY_HORIZON = 24
 samples = []
-for start in range(0, 300, 60):
-    # target[t] stores the delta from t to t + horizon, so use window_end.
-    y_idx = start + TINY_WINDOW - 1
-    if y_idx < T_total and np.isfinite(target[y_idx]):
-        X = np.array(tensor[start:start + TINY_WINDOW], dtype=np.float32)
-        y = target[y_idx]
-        samples.append((torch.from_numpy(X), torch.tensor(y, dtype=torch.float32)))
+valid_y_idx = np.where(np.isfinite(target))[0]
+for y_idx in valid_y_idx:
+    start = y_idx - TINY_WINDOW + 1
+    if start < 0:
+        continue
+    X = np.array(tensor[start:start + TINY_WINDOW], dtype=np.float32)
+    y = target[y_idx]
+    samples.append((torch.from_numpy(X), torch.tensor(y, dtype=torch.float32)))
+    if len(samples) == 5:
+        break
 
 print(f"Tiny samples: {len(samples)}")
+assert samples, "No finite target samples available for integration test"
 
 # Stack into batch
 X_batch = torch.stack([s[0] for s in samples])  # (B, 24, 100, 16)
@@ -88,10 +92,8 @@ for step in range(3):
 
 # Verify feature ranges from real data
 print(f"\nFeature stats from real data (first window):")
-x0 = X_batch[0]  # (24, 100, 16)
-feat_names = ["ssr", "t2m", "u100", "v100", "price",
-              "pc1", "pc2", "pc3", "is_mkt", "cap",
-              "lat", "lon", "sin_h", "cos_h", "sin_m", "cos_m"]
+x0 = X_batch[0]  # (24, N, F)
+feat_names = meta["features"]
 for i, name in enumerate(feat_names):
     vals = x0[:, :, i]
     print(f"  [{i:2d}] {name:8s}  mean={vals.mean():+7.3f}  "

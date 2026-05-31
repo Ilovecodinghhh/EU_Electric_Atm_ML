@@ -40,9 +40,20 @@ def test_cost_adjusted_pnl_not_above_gross_when_costs_positive():
 
 def test_real_fold_timestamp_discipline_and_metrics_alignment():
     raw = load_raw_data()
+    price_cols = [c for c in raw.weather_price.columns if c.startswith("price_")]
+    assert price_cols
+    assert all(c.startswith("price_country_") for c in price_cols)
+    assert not any(c.startswith("price_node_") for c in price_cols)
+    wind_agg_cols = [c for c in raw.weather_price.columns if c.startswith("wind_agg_")]
+    assert wind_agg_cols, "Capacity-weighted country/cluster wind aggregates are required"
+
     samples, _ = build_fold_samples(raw, FOLDS[-1])
     assert not samples.empty
     assert (samples["window_end"] < samples["target_time"]).all()
+    assert (samples["window_end"].dt.hour == 23).all()
+    assert not samples["window_end"].dt.normalize().duplicated().any()
+    trading_days = set(raw.finance.index.normalize())
+    assert set(samples["target_time"].dt.normalize()).issubset(trading_days)
     known_finance_time = samples["finance_feature_time"].dropna()
     assert (known_finance_time < samples.loc[known_finance_time.index, "window_end"]).all()
 

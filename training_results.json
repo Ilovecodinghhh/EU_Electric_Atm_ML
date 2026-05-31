@@ -1,12 +1,12 @@
 {
-  "naive_mse": 1.4620275497436523,
-  "test_loss": 1.5302291654727675,
-  "test_mse": 1.461484619962336,
-  "improvement_pct": 0.03713369369506836,
-  "best_val_loss": 0.925983877344565,
-  "epochs_run": 22,
-  "n_params": 199300,
-  "prediction_path": "quant_output\\stgcn_sweeps\\full_h64_b3_seed55\\stgcn_predictions.csv",
+  "naive_mse": 0.8703852891921997,
+  "test_loss": 0.932168428966355,
+  "test_mse": 0.874315162326713,
+  "improvement_pct": -0.451505184173584,
+  "best_val_loss": 0.7931507263204147,
+  "epochs_run": 2,
+  "n_params": 199876,
+  "prediction_path": "quant_output\\wind_agg_smoke\\stgcn_predictions.csv",
   "config": {
     "device": "cuda",
     "epochs": 100,
@@ -16,10 +16,10 @@
     "n_blocks": 3,
     "dropout": 0.3,
     "patience": 15,
-    "seed": 55,
-    "output_dir": "quant_output\\stgcn_sweeps\\full_h64_b3_seed55",
+    "seed": 11,
+    "output_dir": "quant_output\\wind_agg_smoke",
     "cluster_gcn": false,
     "n_sample_clusters": 3,
-    "dry_run": false
+    "dry_run": true
   }
 }

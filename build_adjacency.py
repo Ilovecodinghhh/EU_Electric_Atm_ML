@@ -11,19 +11,34 @@ import numpy as np
 import pandas as pd
 from scipy.sparse import csr_matrix, diags
 from scipy.spatial.distance import pdist, squareform
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
+try:
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+except ImportError:
+    plt = None
 
 # ─── Parameters ─────────────────────────────────────────────────────
 DIST_THRESHOLD = 150.0   # km — inter-cluster connection cutoff
 SIGMA = 50.0             # km — Gaussian decay parameter
 SPARSIFY_THRESHOLD = 0.1 # weights below this → 0
 EARTH_RADIUS_KM = 6371.0
+NODE_PATH = "data/processed_nodes.csv"
+EUROPE_LAT_RANGE = (35.0, 72.0)
+EUROPE_LON_RANGE = (-15.0, 35.0)
 # ────────────────────────────────────────────────────────────────────
 
 # 1. Load processed nodes
-df = pd.read_csv("processed_nodes.csv")
+df = pd.read_csv(NODE_PATH)
+valid_geo = (
+    df["latitude"].between(*EUROPE_LAT_RANGE)
+    & df["longitude"].between(*EUROPE_LON_RANGE)
+)
+if not valid_geo.all():
+    bad = df.loc[~valid_geo, ["name", "country", "latitude", "longitude"]]
+    print("Dropping nodes outside Europe bounds:")
+    print(bad.to_string(index=False))
+    df = df.loc[valid_geo].reset_index(drop=True)
 N = len(df)
 print(f"Nodes: {N}")
 
@@ -116,30 +131,33 @@ except ImportError:
     print("    Install with: pip install torch")
 
 # 8. Visualisation — sparsity heatmap
-print("\nGenerating heatmap...")
-fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+if plt is None:
+    print("\nmatplotlib not installed; skipped adjacency_heatmap.png")
+else:
+    print("\nGenerating heatmap...")
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
 
-# Sort nodes by cluster for block-diagonal visibility
-sort_idx = np.argsort(clusters)
-A_sorted = A_norm[sort_idx][:, sort_idx]
+    # Sort nodes by cluster for block-diagonal visibility
+    sort_idx = np.argsort(clusters)
+    A_sorted = A_norm[sort_idx][:, sort_idx]
 
-# Left: raw sparsity pattern
-ax = axes[0]
-ax.spy(csr_matrix(A_sorted), markersize=0.8, color="navy", alpha=0.6)
-ax.set_title(f"Sparsity Pattern (density={density*100:.2f}%)", fontsize=11)
-ax.set_xlabel("Node index (sorted by cluster)")
-ax.set_ylabel("Node index (sorted by cluster)")
+    # Left: raw sparsity pattern
+    ax = axes[0]
+    ax.spy(csr_matrix(A_sorted), markersize=0.8, color="navy", alpha=0.6)
+    ax.set_title(f"Sparsity Pattern (density={density*100:.2f}%)", fontsize=11)
+    ax.set_xlabel("Node index (sorted by cluster)")
+    ax.set_ylabel("Node index (sorted by cluster)")
 
-# Right: weighted heatmap
-ax = axes[1]
-im = ax.imshow(A_sorted, cmap="hot_r", aspect="equal", interpolation="nearest")
-ax.set_title("Adjacency Weights (normalised)", fontsize=11)
-ax.set_xlabel("Node index (sorted by cluster)")
-ax.set_ylabel("Node index (sorted by cluster)")
-plt.colorbar(im, ax=ax, fraction=0.046)
+    # Right: weighted heatmap
+    ax = axes[1]
+    im = ax.imshow(A_sorted, cmap="hot_r", aspect="equal", interpolation="nearest")
+    ax.set_title("Adjacency Weights (normalised)", fontsize=11)
+    ax.set_xlabel("Node index (sorted by cluster)")
+    ax.set_ylabel("Node index (sorted by cluster)")
+    plt.colorbar(im, ax=ax, fraction=0.046)
 
-fig.suptitle(f"ST-GCN Adjacency Matrix — {N} nodes, {nnz} edges, "
-             f"threshold={DIST_THRESHOLD} km", fontsize=12, fontweight="bold")
-fig.tight_layout()
-fig.savefig("adjacency_heatmap.png", dpi=150)
-print("✓ Saved adjacency_heatmap.png")
+    fig.suptitle(f"ST-GCN Adjacency Matrix — {N} nodes, {nnz} edges, "
+                 f"threshold={DIST_THRESHOLD} km", fontsize=12, fontweight="bold")
+    fig.tight_layout()
+    fig.savefig("adjacency_heatmap.png", dpi=150)
+    print("✓ Saved adjacency_heatmap.png")

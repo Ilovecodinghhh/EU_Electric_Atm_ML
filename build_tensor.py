@@ -3,28 +3,37 @@ Multimodal Spatiotemporal Feature Tensor Assembly & DataLoader for ST-GCN.
 
 Produces:
   - feature_tensor.npy   (T, N, F) float32 memmap
-  - target_vector.npy    (T,) float32 — ΔPC1 at +24h
+  - target_vector.npy    (T,) float32 — next trading-day PC1 factor
   - scaler_params.npz    — all scaler parameters for inference
   - feature_summary.txt  — feature documentation
   - train/val/test DataLoaders (chronological split, no leakage)
 
-Feature vector (F=16) per node per timestep:
+Feature vector (F=25) per node per timestep:
   [0]  ssr            — global Z-score
   [1]  t2m            — global Z-score
   [2]  u100           — global Z-score
   [3]  v100           — global Z-score
-  [4]  price          — RobustScaler (per-country, mapped to node)
-  [5]  finance_pc1    — Z-score (broadcast to all nodes)
-  [6]  finance_pc2    — Z-score (broadcast to all nodes)
-  [7]  finance_pc3    — Z-score (broadcast to all nodes)
-  [8]  is_market_open — binary 0/1, no scaling
-  [9]  capacity_mw    — log1p + Z-score (static, broadcast over time)
-  [10] latitude       — MinMax normalised (static)
-  [11] longitude      — MinMax normalised (static)
-  [12] sin_hour       — sin(2π·hour/24)
-  [13] cos_hour       — cos(2π·hour/24)
-  [14] sin_month      — sin(2π·(month-1)/12)
-  [15] cos_month      — cos(2π·(month-1)/12)
+  [4]  wind_speed     — global Z-score
+  [5]  wind_ramp      — global Z-score
+  [6]  wind_power     — cubic power-curve proxy, global Z-score
+  [7]  country_wind_speed   — capacity-weighted country wind speed
+  [8]  country_wind_ramp    — capacity-weighted country wind ramp
+  [9]  cluster_wind_speed   — capacity-weighted cluster wind speed
+  [10] cluster_wind_ramp    — capacity-weighted cluster wind ramp
+  [11] country_price        — country-level price, RobustScaler
+  [12] market_price_mean    — equal-country Europe price mean
+  [13] country_price_spread — country price minus Europe mean
+  [14] finance_pc1          — Z-score, previous trading close
+  [15] finance_pc2          — Z-score, previous trading close
+  [16] finance_pc3          — Z-score, previous trading close
+  [17] is_market_open       — binary 0/1, no scaling
+  [18] capacity_mw          — log1p + Z-score (static, broadcast over time)
+  [19] latitude             — MinMax normalised (static)
+  [20] longitude            — MinMax normalised (static)
+  [21] sin_hour             — sin(2π·hour/24)
+  [22] cos_hour             — cos(2π·hour/24)
+  [23] sin_month            — sin(2π·(month-1)/12)
+  [24] cos_month            — cos(2π·(month-1)/12)
 """
 
 import os
@@ -40,11 +49,13 @@ from torch.utils.data import Dataset, DataLoader
 # ─── Parameters ─────────────────────────────────────────────────────
 WINDOW_SIZE = 168        # 7 days of hourly data
 HORIZON = 24             # predict 24h ahead
-STRIDE = 6              # sliding window stride
+STRIDE = 24             # one sample per daily trading decision timestamp
 BATCH_SIZE = 16
 NUM_WORKERS = 0          # Local Dataset in this builder is not picklable on Windows
-N_NODES = 100
-N_FEATURES = 16
+N_FEATURES = 25
+DECISION_HOUR_UTC = 23
+EUROPE_LAT_RANGE = (35.0, 72.0)
+EUROPE_LON_RANGE = (-15.0, 35.0)
 TRAIN_END = "2023-12-31 23:00:00"   # inclusive
 VAL_MONTHS = 0           # 0 = no separate val from train; we'll split 2024 H1 as val, H2 as test
 # Actually: 2019-2023 train, 2024-H1 val, 2024-H2 test
@@ -56,6 +67,16 @@ DATA_DIR = "data"
 OUTPUT_DIR = "tensor_output"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 # ────────────────────────────────────────────────────────────────────
+
+
+def winsorize_by_train_quantiles(arr, train_mask, name, params, q_low=0.01, q_high=0.99):
+    """Clip using train-period quantiles, preserving out-of-sample discipline."""
+    train_data = arr[train_mask]
+    lo = np.nanquantile(train_data, q_low, axis=0)
+    hi = np.nanquantile(train_data, q_high, axis=0)
+    params[f"{name}_winsor_q_low"] = np.array(lo, dtype=np.float32)
+    params[f"{name}_winsor_q_high"] = np.array(hi, dtype=np.float32)
+    return np.clip(arr, lo, hi)
 
 
 def load_hourly_csv(filename):
@@ -82,14 +103,16 @@ def build_finance_pca_hourly(time_index, train_end_ts):
     fin.index = pd.to_datetime(fin.index, utc=True)
     fin.dropna(inplace=True)
 
-    # Log returns for PCA
+    # Log returns for PCA.
     log_ret = np.log(fin / fin.shift(1)).dropna()
 
-    # Fit scaler/PCA on train-period returns only, then transform all periods.
-    # This avoids leaking validation/test covariance structure into features.
+    # Fit all finance preprocessing on train-period returns only.
     train_ret_mask = log_ret.index <= train_end_ts
     if not train_ret_mask.any():
         raise ValueError("No finance returns found in the configured training period")
+    ret_q_low = log_ret.loc[train_ret_mask].quantile(0.01)
+    ret_q_high = log_ret.loc[train_ret_mask].quantile(0.99)
+    log_ret = log_ret.clip(lower=ret_q_low, upper=ret_q_high, axis=1)
 
     scaler_fin = StandardScaler()
     ret_train_scaled = scaler_fin.fit_transform(log_ret.loc[train_ret_mask])
@@ -138,6 +161,8 @@ def build_finance_pca_hourly(time_index, train_end_ts):
         "finance_pca_mean": pca.mean_.astype(np.float32),
         "finance_pca_explained_variance_ratio": pca.explained_variance_ratio_.astype(np.float32),
         "finance_pca_feature_lag_trading_days": np.array([1], dtype=np.int32),
+        "finance_return_winsor_q_low": ret_q_low.values.astype(np.float32),
+        "finance_return_winsor_q_high": ret_q_high.values.astype(np.float32),
     }
 
     return pca_feature_arr, pca_realized_arr, is_open, pca_daily, pca_params
@@ -150,13 +175,23 @@ def main():
 
     # ── 1. Load node metadata ──────────────────────────────────────
     nodes = pd.read_csv("data/processed_nodes.csv")
+    valid_geo = (
+        nodes["latitude"].between(*EUROPE_LAT_RANGE)
+        & nodes["longitude"].between(*EUROPE_LON_RANGE)
+    )
+    if not valid_geo.all():
+        bad = nodes.loc[~valid_geo, ["name", "country", "latitude", "longitude"]]
+        print("Dropping nodes outside Europe bounds:")
+        print(bad.to_string(index=False))
+        nodes = nodes.loc[valid_geo].reset_index(drop=True)
     node_names = nodes["name"].tolist()
     countries = nodes["country"].values
     clusters = nodes["physical_cluster"].values
     lat = nodes["latitude"].values.astype(np.float32)
     lon = nodes["longitude"].values.astype(np.float32)
     cap = nodes["capacity_mw"].values.astype(np.float32)
-    print(f"Nodes: {len(nodes)}, Clusters: {len(np.unique(clusters))}")
+    n_nodes = len(nodes)
+    print(f"Nodes: {n_nodes}, Clusters: {len(np.unique(clusters))}")
 
     # ── 2. Load hourly time-series ─────────────────────────────────
     print("\nLoading hourly CSVs...")
@@ -185,11 +220,41 @@ def main():
     T = len(common_idx)
     print(f"Common time steps: {T}  ({common_idx[0]} → {common_idx[-1]})")
 
-    price_arr = price_df.loc[common_idx].values.astype(np.float32)
+    unique_countries = np.unique(countries)
+    country_to_col = {country: i for i, country in enumerate(unique_countries)}
+    country_price_raw = np.empty((T, len(unique_countries)), dtype=np.float32)
+    for country in unique_countries:
+        country_nodes = [name for name, c in zip(node_names, countries) if c == country]
+        country_prices = price_df.loc[common_idx, country_nodes]
+        if country_prices.T.drop_duplicates().shape[0] != 1:
+            print(f"  Warning: {country} has non-identical node price series; using first node")
+        country_price_raw[:, country_to_col[country]] = country_prices.iloc[:, 0].values.astype(np.float32)
+
     ssr_arr   = ssr_df.loc[common_idx].values.astype(np.float32)
     t2m_arr   = t2m_df.loc[common_idx].values.astype(np.float32)
     u100_arr  = u100_df.loc[common_idx].values.astype(np.float32)
     v100_arr  = v100_df.loc[common_idx].values.astype(np.float32)
+    wind_speed_arr = np.sqrt(u100_arr ** 2 + v100_arr ** 2).astype(np.float32)
+    wind_speed_ramp_arr = np.diff(
+        wind_speed_arr, axis=0, prepend=wind_speed_arr[[0]]
+    ).astype(np.float32)
+    wind_power_proxy_arr = np.clip(
+        (wind_speed_arr - 3.0) / (12.0 - 3.0), 0.0, 1.0
+    ).astype(np.float32) ** 3
+    country_wind_speed_arr = np.empty((T, n_nodes), dtype=np.float32)
+    country_wind_ramp_arr = np.empty((T, n_nodes), dtype=np.float32)
+    cluster_wind_speed_arr = np.empty((T, n_nodes), dtype=np.float32)
+    cluster_wind_ramp_arr = np.empty((T, n_nodes), dtype=np.float32)
+    for country in unique_countries:
+        idx = np.where(countries == country)[0]
+        weights = cap[idx] / cap[idx].sum()
+        country_wind_speed_arr[:, idx] = wind_speed_arr[:, idx].dot(weights)[:, None]
+        country_wind_ramp_arr[:, idx] = wind_speed_ramp_arr[:, idx].dot(weights)[:, None]
+    for cluster in np.unique(clusters):
+        idx = np.where(clusters == cluster)[0]
+        weights = cap[idx] / cap[idx].sum()
+        cluster_wind_speed_arr[:, idx] = wind_speed_arr[:, idx].dot(weights)[:, None]
+        cluster_wind_ramp_arr[:, idx] = wind_speed_ramp_arr[:, idx].dot(weights)[:, None]
 
     # Free DataFrames
     del price_df, ssr_df, t2m_df, u100_df, v100_df
@@ -235,25 +300,41 @@ def main():
     t2m_arr   = global_zscore(t2m_arr, "t2m")
     u100_arr  = global_zscore(u100_arr, "u100")
     v100_arr  = global_zscore(v100_arr, "v100")
-    print("  ✓ Weather features: global Z-score")
+    wind_speed_arr = global_zscore(wind_speed_arr, "wind_speed")
+    wind_speed_ramp_arr = global_zscore(wind_speed_ramp_arr, "wind_speed_ramp")
+    wind_power_proxy_arr = global_zscore(wind_power_proxy_arr, "wind_power_proxy")
+    country_wind_speed_arr = global_zscore(country_wind_speed_arr, "country_wind_speed")
+    country_wind_ramp_arr = global_zscore(country_wind_ramp_arr, "country_wind_ramp")
+    cluster_wind_speed_arr = global_zscore(cluster_wind_speed_arr, "cluster_wind_speed")
+    cluster_wind_ramp_arr = global_zscore(cluster_wind_ramp_arr, "cluster_wind_ramp")
+    print("  ✓ Weather features: global Z-score + wind speed/ramp/proxy")
 
-    # 5b. Electricity price: RobustScaler per country
-    unique_countries = np.unique(countries)
+    # 5b. Electricity price: country-level RobustScaler, then mapped to nodes.
+    country_price_raw = winsorize_by_train_quantiles(
+        country_price_raw, train_mask, "country_price", scaler_params
+    )
+    country_price_scaled = country_price_raw.copy()
     for c in unique_countries:
-        col_mask = countries == c
-        col_indices = np.where(col_mask)[0]
-        train_prices = price_arr[train_mask][:, col_indices].flatten()
+        country_col = country_to_col[c]
+        train_prices = country_price_raw[train_mask, country_col]
         median = np.median(train_prices)
         q25, q75 = np.percentile(train_prices, [25, 75])
         iqr = q75 - q25 + 1e-8
-        price_arr[:, col_indices] = (price_arr[:, col_indices] - median) / iqr
+        country_price_scaled[:, country_col] = (country_price_raw[:, country_col] - median) / iqr
         scaler_params[f"price_{c}_median"] = float(median)
         scaler_params[f"price_{c}_iqr"] = float(iqr)
-    print(f"  ✓ Electricity price: RobustScaler per country ({len(unique_countries)} countries)")
+    print(f"  ✓ Electricity price: country-level market features ({len(unique_countries)} countries)")
 
-    # 5c. Finance PCA: Z-score per component (fit on train realized PCA)
+    country_price_arr = np.empty((T, n_nodes), dtype=np.float32)
+    for node_idx, country in enumerate(countries):
+        country_price_arr[:, node_idx] = country_price_scaled[:, country_to_col[country]]
+    market_price_mean = country_price_scaled.mean(axis=1).astype(np.float32)
+    country_price_spread_arr = country_price_arr - market_price_mean[:, None]
+
+    # 5c. Finance PCA: Z-score per component (fit on train daily PCA)
+    pca_train_daily_mask = pca_daily.index <= train_end_ts
     for i in range(3):
-        train_pc = pca_realized_arr[train_mask, i]
+        train_pc = pca_daily.loc[pca_train_daily_mask, f"pc{i+1}"].values
         finite_train_pc = train_pc[np.isfinite(train_pc)]
         mu = finite_train_pc.mean()
         sigma = finite_train_pc.std() + 1e-8
@@ -299,11 +380,11 @@ def main():
     np.savez(os.path.join(OUTPUT_DIR, "scaler_params.npz"), **scaler_params)
 
     # ── 6. Assemble feature tensor (T, N, F) via memmap ────────────
-    print(f"\nAssembling feature tensor: ({T}, {N_NODES}, {N_FEATURES})...")
+    print(f"\nAssembling feature tensor: ({T}, {n_nodes}, {N_FEATURES})...")
     tensor_path = os.path.join(OUTPUT_DIR, "feature_tensor.npy")
     # Pre-compute shape and save header
-    shape = (T, N_NODES, N_FEATURES)
-    tensor_size_mb = T * N_NODES * N_FEATURES * 4 / (1024**2)
+    shape = (T, n_nodes, N_FEATURES)
+    tensor_size_mb = T * n_nodes * N_FEATURES * 4 / (1024**2)
     print(f"  Tensor size: {tensor_size_mb:.1f} MB")
 
     # Use memmap for memory efficiency
@@ -315,54 +396,95 @@ def main():
     fp[:, :, 1] = t2m_arr
     fp[:, :, 2] = u100_arr
     fp[:, :, 3] = v100_arr
+    fp[:, :, 4] = wind_speed_arr
+    fp[:, :, 5] = wind_speed_ramp_arr
+    fp[:, :, 6] = wind_power_proxy_arr
+    fp[:, :, 7] = country_wind_speed_arr
+    fp[:, :, 8] = country_wind_ramp_arr
+    fp[:, :, 9] = cluster_wind_speed_arr
+    fp[:, :, 10] = cluster_wind_ramp_arr
     del ssr_arr, t2m_arr, u100_arr, v100_arr
+    del wind_speed_arr, wind_speed_ramp_arr, wind_power_proxy_arr
+    del country_wind_speed_arr, country_wind_ramp_arr
+    del cluster_wind_speed_arr, cluster_wind_ramp_arr
     gc.collect()
-    print("  [0-3] Weather features filled")
+    print("  [0-10] Weather/wind features filled")
 
     # [4] price (T, N)
-    fp[:, :, 4] = price_arr
-    del price_arr
+    fp[:, :, 11] = country_price_arr
+    fp[:, :, 12] = market_price_mean[:, None]
+    fp[:, :, 13] = country_price_spread_arr
+    del country_price_raw, country_price_scaled, country_price_arr
+    del market_price_mean, country_price_spread_arr
     gc.collect()
-    print("  [4]   Price filled")
+    print("  [11-13] Country/market price features filled")
 
     # [5-7] finance PCA (T, 3) → broadcast to (T, N, 3)
-    fp[:, :, 5] = pca_arr[:, 0:1]  # broadcast
-    fp[:, :, 6] = pca_arr[:, 1:2]
-    fp[:, :, 7] = pca_arr[:, 2:3]
-    print("  [5-7] Finance PCA filled (broadcast)")
+    fp[:, :, 14] = pca_arr[:, 0:1]  # broadcast
+    fp[:, :, 15] = pca_arr[:, 1:2]
+    fp[:, :, 16] = pca_arr[:, 2:3]
+    print("  [14-16] Finance PCA filled (broadcast, previous trading close)")
 
     # [8] is_market_open (T,) → broadcast to (T, N)
-    fp[:, :, 8] = is_open[:, None]
-    print("  [8]   is_market_open filled")
+    fp[:, :, 17] = is_open[:, None]
+    print("  [17]  is_market_open filled")
 
     # [9] capacity (N,) → broadcast to (T, N)
-    fp[:, :, 9] = cap_scaled[None, :]
-    print("  [9]   Capacity filled (static)")
+    fp[:, :, 18] = cap_scaled[None, :]
+    print("  [18]  Capacity filled (static)")
 
     # [10-11] lat/lon (N,) → broadcast
-    fp[:, :, 10] = lat_norm[None, :]
-    fp[:, :, 11] = lon_norm[None, :]
-    print("  [10-11] Lat/Lon filled (static)")
+    fp[:, :, 19] = lat_norm[None, :]
+    fp[:, :, 20] = lon_norm[None, :]
+    print("  [19-20] Lat/Lon filled (static)")
 
     # [12-15] cyclical time (T,) → broadcast to (T, N)
-    fp[:, :, 12] = sin_hour[:, None]
-    fp[:, :, 13] = cos_hour[:, None]
-    fp[:, :, 14] = sin_month[:, None]
-    fp[:, :, 15] = cos_month[:, None]
-    print("  [12-15] Cyclical time features filled")
+    fp[:, :, 21] = sin_hour[:, None]
+    fp[:, :, 22] = cos_hour[:, None]
+    fp[:, :, 23] = sin_month[:, None]
+    fp[:, :, 24] = cos_month[:, None]
+    print("  [21-24] Cyclical time features filled")
 
     fp.flush()
     print(f"  ✓ Saved {tensor_path}")
 
-    # ── 7. Build target vector: ΔPC1 at +24h ──────────────────────
-    print("\nBuilding target: ΔPC1 (24h ahead change rate)...")
-    # Use the scaled PC1 (feature index 5) — same as pca_arr[:, 0] already Z-scored
+    # ── 7. Build target vector: next trading-day PC1 ──────────────
+    print("\nBuilding target: next trading-day PC1 factor...")
+    # PC1 is derived from daily stock returns, so the target is sampled once
+    # per trading day at the configured decision hour.
     # Target convention:
-    #   target_full[t] = pc1_zscore[t + HORIZON] - pc1_zscore[t]
+    #   target_full[t] = pc1_zscore[next_trading_day]
     # A training window ending at t must therefore read target_full[t].
-    pc1 = pca_realized_arr[:, 0]  # already Z-scored, not input-lagged
+    pc1_mu = scaler_params["finance_pc1_mean"]
+    pc1_sigma = scaler_params["finance_pc1_std"]
+    pca_daily_z = pca_daily.copy()
+    pca_daily_z.index = pca_daily_z.index.normalize()
+    pca_daily_z["pc1_z"] = (pca_daily_z["pc1"] - pc1_mu) / pc1_sigma
+
+    common_pos = {ts: i for i, ts in enumerate(common_idx)}
     target_full = np.full(T, np.nan, dtype=np.float32)
-    target_full[:T - HORIZON] = pc1[HORIZON:] - pc1[:T - HORIZON]
+    target_time_full = np.full(T, "", dtype=object)
+
+    def same_split(decision_ts, target_ts):
+        if decision_ts <= train_end_ts:
+            return target_ts <= train_end_ts
+        if val_start_ts <= decision_ts <= val_end_ts:
+            return target_ts <= val_end_ts
+        if decision_ts >= test_start_ts:
+            return True
+        return False
+
+    trading_dates = list(pca_daily_z.index)
+    for j in range(len(trading_dates) - 1):
+        decision_ts = trading_dates[j] + pd.Timedelta(hours=DECISION_HOUR_UTC)
+        target_ts = trading_dates[j + 1] + pd.Timedelta(hours=DECISION_HOUR_UTC)
+        if decision_ts not in common_pos or not same_split(decision_ts, target_ts):
+            continue
+        target_full[common_pos[decision_ts]] = pca_daily_z.iloc[j + 1]["pc1_z"]
+        target_time_full[common_pos[decision_ts]] = str(target_ts)
+
+    finite_targets = np.where(np.isfinite(target_full))[0]
+    assert all(common_idx[i] < pd.Timestamp(target_time_full[i]) for i in finite_targets)
 
     target_path = os.path.join(OUTPUT_DIR, "target_vector.npy")
     np.save(target_path, target_full)
@@ -371,20 +493,31 @@ def main():
     # Save time index for reference
     time_path = os.path.join(OUTPUT_DIR, "time_index.csv")
     pd.Series(common_idx).to_csv(time_path, index=False, header=["timestamp"])
+    target_time_path = os.path.join(OUTPUT_DIR, "target_time_index.csv")
+    pd.DataFrame({
+        "timestamp": common_idx.astype(str),
+        "target_time": target_time_full,
+    }).to_csv(target_time_path, index=False)
     print(f"  ✓ Saved {time_path}")
+    print(f"  ✓ Saved {target_time_path}")
 
     # Save tensor shape metadata
     meta = {
         "shape": list(shape),
         "features": [
-            "ssr", "t2m", "u100", "v100", "price",
+            "ssr", "t2m", "u100", "v100",
+            "wind_speed", "wind_speed_ramp", "wind_power_proxy",
+            "country_wind_speed", "country_wind_ramp",
+            "cluster_wind_speed", "cluster_wind_ramp",
+            "country_price", "market_price_mean", "country_price_spread",
             "finance_pc1", "finance_pc2", "finance_pc3",
             "is_market_open", "capacity_mw",
             "latitude", "longitude",
             "sin_hour", "cos_hour", "sin_month", "cos_month"
         ],
         "window_size": WINDOW_SIZE,
-        "horizon": HORIZON,
+        "horizon": "next_trading_day",
+        "decision_hour_utc": DECISION_HOUR_UTC,
         "stride": STRIDE,
         "train_end": TRAIN_END,
         "val_range": [VAL_START, VAL_END],
@@ -393,7 +526,12 @@ def main():
         "n_val": int(n_val),
         "n_test": int(n_test),
         "finance_feature_lag": "previous_trading_close",
-        "target_source": "realized_finance_pc1",
+        "finance_return_winsor_quantiles": [0.01, 0.99],
+        "electricity_price_winsor_quantiles": [0.01, 0.99],
+        "wind_aggregate_policy": "capacity_weighted_by_country_and_physical_cluster",
+        "electricity_price_granularity": "country_level_equal_country_market_context",
+        "electricity_price_countries": unique_countries.tolist(),
+        "target_source": "next_trading_day_realized_finance_pc1",
     }
     with open(os.path.join(OUTPUT_DIR, "tensor_meta.json"), "w") as f:
         json.dump(meta, f, indent=2)

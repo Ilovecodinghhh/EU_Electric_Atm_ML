@@ -11,10 +11,12 @@ import argparse
 import json
 import math
 import os
+import warnings
 from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
+from pandas.errors import PerformanceWarning
 from sklearn.decomposition import PCA
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.linear_model import LinearRegression, Ridge
@@ -24,9 +26,14 @@ from sklearn.preprocessing import RobustScaler, StandardScaler
 DATA_DIR = "data"
 OUTPUT_DIR = "quant_output"
 WINDOW_SIZE = 168
-STRIDE = 6
+STRIDE = 24
 TX_COST_BPS = 10.0
 RANDOM_SEED = 11
+EUROPE_LAT_RANGE = (35.0, 72.0)
+EUROPE_LON_RANGE = (-15.0, 35.0)
+WINSOR_Q_LOW = 0.01
+WINSOR_Q_HIGH = 0.99
+warnings.filterwarnings("ignore", category=PerformanceWarning)
 
 FOLDS = [
     {
@@ -63,6 +70,13 @@ class RawData:
     finance: pd.DataFrame
 
 
+def winsorize_train(series_or_df, train_mask):
+    train = series_or_df.loc[train_mask]
+    lo = train.quantile(WINSOR_Q_LOW)
+    hi = train.quantile(WINSOR_Q_HIGH)
+    return series_or_df.clip(lower=lo, upper=hi, axis=1 if isinstance(series_or_df, pd.DataFrame) else 0)
+
+
 def utc_ts(value):
     return pd.Timestamp(value, tz="UTC")
 
@@ -76,6 +90,10 @@ def load_hourly_csv(filename, node_names):
 
 def load_raw_data():
     nodes = pd.read_csv(os.path.join(DATA_DIR, "processed_nodes.csv"))
+    nodes = nodes[
+        nodes["latitude"].between(*EUROPE_LAT_RANGE)
+        & nodes["longitude"].between(*EUROPE_LON_RANGE)
+    ].reset_index(drop=True)
     node_names = nodes["name"].tolist()
     frames = {
         "price": load_hourly_csv("price_top100_2019-01-01_2024-12-31.csv", node_names),
@@ -89,11 +107,39 @@ def load_raw_data():
         common = common.intersection(df.index)
     common = common.sort_values()
 
+    wind_speed = np.sqrt(
+        frames["u100"].loc[common].astype(np.float32) ** 2
+        + frames["v100"].loc[common].astype(np.float32) ** 2
+    )
+    frames["wind_speed"] = wind_speed
+    frames["wind_speed_ramp"] = wind_speed.diff().fillna(0.0)
+    frames["wind_power_proxy"] = np.clip((wind_speed - 3.0) / (12.0 - 3.0), 0.0, 1.0) ** 3
+
     agg = pd.DataFrame(index=common)
+    cap = nodes["capacity_mw"].to_numpy(dtype=float)
     for name, df in frames.items():
+        if name == "price":
+            for country in sorted(nodes["country"].dropna().unique()):
+                country_nodes = nodes.loc[nodes["country"] == country, "name"].tolist()
+                present = [col for col in country_nodes if col in df.columns]
+                if not present:
+                    continue
+                country_prices = df.loc[common, present]
+                agg[f"price_country_{country}"] = country_prices.iloc[:, 0].astype(np.float32)
+            continue
         values = df.loc[common].astype(np.float32)
         agg[f"{name}_node_mean"] = values.mean(axis=1)
         agg[f"{name}_node_std"] = values.std(axis=1)
+
+    for group_col in ["country", "physical_cluster"]:
+        prefix = "country" if group_col == "country" else "cluster"
+        for group_value in sorted(nodes[group_col].dropna().unique()):
+            idx = np.where(nodes[group_col].values == group_value)[0]
+            weights = cap[idx] / cap[idx].sum()
+            speed = wind_speed.iloc[:, idx].dot(weights)
+            ramp = frames["wind_speed_ramp"].iloc[:, idx].dot(weights)
+            agg[f"wind_agg_{prefix}_{group_value}_speed"] = speed.astype(np.float32)
+            agg[f"wind_agg_{prefix}_{group_value}_ramp"] = ramp.astype(np.float32)
 
     finance = pd.read_csv(
         os.path.join(DATA_DIR, "Finance20192024", "raw_finance.csv"),
@@ -110,6 +156,7 @@ def fit_fold_finance(finance, train_end):
     train_mask = log_ret.index <= train_end
     if train_mask.sum() < 30:
         raise ValueError(f"Too few finance observations before {train_end}")
+    log_ret = winsorize_train(log_ret, train_mask)
 
     scaler = StandardScaler()
     train_scaled = scaler.fit_transform(log_ret.loc[train_mask])
@@ -122,6 +169,10 @@ def fit_fold_finance(finance, train_end):
         index=log_ret.index,
         columns=["pc1", "pc2", "pc3"],
     )
+    for col in ["pc1", "pc2", "pc3"]:
+        mu = pc.loc[train_mask, col].mean()
+        sigma = pc.loc[train_mask, col].std() + 1e-8
+        pc[col] = (pc[col] - mu) / sigma
 
     weights = pd.Series(pca.components_[0], index=log_ret.columns)
     weights = weights / weights.abs().sum()
@@ -129,7 +180,7 @@ def fit_fold_finance(finance, train_end):
 
     daily = pc.copy()
     daily["pc1_change"] = daily["pc1"].diff()
-    daily["target_pc1_next"] = daily["pc1"].shift(-1) - daily["pc1"]
+    daily["target_pc1_next"] = daily["pc1"].shift(-1)
     daily["basket_return_next"] = basket_return.shift(-1)
     daily["target_time"] = daily.index.to_series().shift(-1) + pd.Timedelta(hours=23)
     daily["finance_feature_time"] = daily.index.to_series().shift(1) + pd.Timedelta(hours=23)
@@ -137,6 +188,7 @@ def fit_fold_finance(finance, train_end):
     daily["lag_pc2"] = daily["pc2"].shift(1)
     daily["lag_pc3"] = daily["pc3"].shift(1)
     daily["prev_pc1_change"] = daily["pc1_change"].shift(1)
+    daily["rolling5_pc1"] = daily["pc1"].shift(1).rolling(5, min_periods=1).mean()
     daily["rolling5_pc1_change"] = daily["pc1_change"].shift(1).rolling(5, min_periods=1).mean()
     daily = daily.dropna(subset=["target_pc1_next", "basket_return_next", "target_time"])
 
@@ -171,11 +223,17 @@ def build_fold_samples(raw, fold):
 
     hourly = raw.weather_price.copy()
     train_mask = hourly.index <= train_end
-    for col in [c for c in hourly.columns if c.startswith(("ssr", "t2m", "u100", "v100"))]:
+    for col in [c for c in hourly.columns if c.startswith((
+        "ssr", "t2m", "u100", "v100",
+        "wind_speed", "wind_speed_ramp", "wind_power_proxy",
+    ))]:
         mu = hourly.loc[train_mask, col].mean()
         sigma = hourly.loc[train_mask, col].std() + 1e-8
         hourly[col] = (hourly[col] - mu) / sigma
     for col in [c for c in hourly.columns if c.startswith("price")]:
+        lo = hourly.loc[train_mask, col].quantile(WINSOR_Q_LOW)
+        hi = hourly.loc[train_mask, col].quantile(WINSOR_Q_HIGH)
+        hourly[col] = hourly[col].clip(lo, hi)
         med = hourly.loc[train_mask, col].median()
         iqr = hourly.loc[train_mask, col].quantile(0.75) - hourly.loc[train_mask, col].quantile(0.25) + 1e-8
         hourly[col] = (hourly[col] - med) / iqr
@@ -207,6 +265,7 @@ def build_fold_samples(raw, fold):
             "lag_pc2": float(drow.get("lag_pc2", 0.0) if pd.notna(drow.get("lag_pc2", np.nan)) else 0.0),
             "lag_pc3": float(drow.get("lag_pc3", 0.0) if pd.notna(drow.get("lag_pc3", np.nan)) else 0.0),
             "prev_pc1_change": float(drow.get("prev_pc1_change", 0.0) if pd.notna(drow.get("prev_pc1_change", np.nan)) else 0.0),
+            "rolling5_pc1": float(drow.get("rolling5_pc1", 0.0) if pd.notna(drow.get("rolling5_pc1", np.nan)) else 0.0),
             "rolling5_pc1_change": float(drow.get("rolling5_pc1_change", 0.0) if pd.notna(drow.get("rolling5_pc1_change", np.nan)) else 0.0),
         })
         sample_rows.append(row)
@@ -227,19 +286,25 @@ def build_fold_samples(raw, fold):
 
 
 def feature_sets(columns):
-    weather = [c for c in columns if c.startswith(("ssr_", "t2m_", "u100_", "v100_"))]
+    weather = [c for c in columns if c.startswith((
+        "ssr_", "t2m_", "u100_", "v100_",
+        "wind_speed_", "wind_speed_ramp_", "wind_power_proxy_",
+    ))]
+    wind_agg = [c for c in columns if c.startswith("wind_agg_")]
     electricity = [c for c in columns if c.startswith("price_")]
-    finance = ["lag_pc1", "lag_pc2", "lag_pc3", "prev_pc1_change", "rolling5_pc1_change"]
+    finance = ["lag_pc1", "lag_pc2", "lag_pc3", "prev_pc1_change", "rolling5_pc1", "rolling5_pc1_change"]
     time_cols = ["sin_hour", "cos_hour", "sin_month", "cos_month"]
     return {
-        "ridge_full": weather + electricity + finance + time_cols,
+        "ridge_full": weather + wind_agg + electricity + finance + time_cols,
         "ridge_finance_only": finance,
-        "ridge_weather_only": weather + time_cols,
+        "ridge_weather_only": weather + wind_agg + time_cols,
+        "ridge_price_only": electricity + time_cols,
         "ridge_electricity_only": electricity + time_cols,
-        "ridge_weather_electricity": weather + electricity + time_cols,
-        "ridge_no_finance": weather + electricity + time_cols,
-        "linear_full": weather + electricity + finance + time_cols,
-        "gradient_boosting_full": weather + electricity + finance + time_cols,
+        "ridge_wind_aggregate": wind_agg + time_cols,
+        "ridge_weather_electricity": weather + wind_agg + electricity + time_cols,
+        "ridge_no_finance": weather + wind_agg + electricity + time_cols,
+        "linear_full": weather + wind_agg + electricity + finance + time_cols,
+        "gradient_boosting_full": weather + wind_agg + electricity + finance + time_cols,
     }
 
 
@@ -259,8 +324,9 @@ def fit_predict_models(samples):
         preds.append(df)
 
     add_prediction("zero_change", np.zeros(len(test)))
+    add_prediction("previous_pc1", test["lag_pc1"].values)
+    add_prediction("rolling5_pc1", test["rolling5_pc1"].values)
     add_prediction("previous_pc1_change", test["prev_pc1_change"].values)
-    add_prediction("rolling5_mean", test["rolling5_pc1_change"].values)
 
     sets = feature_sets(samples.columns)
     for name, cols in sets.items():

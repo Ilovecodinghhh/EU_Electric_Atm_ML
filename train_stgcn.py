@@ -24,9 +24,9 @@ from stgcn_model import STGCNModel, HybridLoss, STGCNTrainer, ClusterGCNSampler
 TENSOR_DIR = "tensor_output"
 WINDOW_SIZE = 168
 HORIZON = 24
-STRIDE = 6
-N_FEATURES = 16
-N_NODES = 100
+STRIDE = 24
+N_FEATURES = 25
+N_NODES = 99
 # ────────────────────────────────────────────────────────────────────
 
 
@@ -108,6 +108,10 @@ def main():
     print(f"Tensor: ({T_total}, {N}, {F})")
     time_index = pd.read_csv(os.path.join(TENSOR_DIR, "time_index.csv"),
                              parse_dates=["timestamp"])["timestamp"]
+    target_time_path = os.path.join(TENSOR_DIR, "target_time_index.csv")
+    target_time_index = None
+    if os.path.exists(target_time_path):
+        target_time_index = pd.read_csv(target_time_path)["target_time"]
 
     # ── Load tensors ───────────────────────────────────────────────
     print("Loading feature tensor (memmap)...")
@@ -171,6 +175,10 @@ def main():
     cluster_sampler = None
     if args.cluster_gcn:
         nodes = pd.read_csv("data/processed_nodes.csv")
+        nodes = nodes[
+            nodes["latitude"].between(35.0, 72.0)
+            & nodes["longitude"].between(-15.0, 35.0)
+        ].reset_index(drop=True)
         cluster_sampler = ClusterGCNSampler(
             nodes["physical_cluster"].values, A_norm,
             n_sample_clusters=args.n_sample_clusters
@@ -220,11 +228,16 @@ def main():
     print(f"{'='*60}")
 
     test_window_end_idx = np.array([i + WINDOW_SIZE - 1 for i in test_ds.indices])
+    target_idx = test_window_end_idx + HORIZON
+    if target_time_index is not None:
+        target_time = target_time_index.iloc[test_window_end_idx].values
+    else:
+        target_time = time_index.iloc[target_idx].astype(str).values
     pred_df = pd.DataFrame({
         "window_end_idx": test_window_end_idx,
         "window_end": time_index.iloc[test_window_end_idx].astype(str).values,
-        "target_idx": test_window_end_idx + HORIZON,
-        "target_time": time_index.iloc[test_window_end_idx + HORIZON].astype(str).values,
+        "target_idx": target_idx,
+        "target_time": target_time,
         "y_true": y_true,
         "y_pred": pred,
         "model": "stgcn",
