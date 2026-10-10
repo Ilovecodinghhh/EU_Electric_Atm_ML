@@ -1,15 +1,24 @@
-# Large tensor outputs (regenerate with build_tensor.py)
-tensor_output/feature_tensor.npy
-tensor_output/target_vector.npy
-tensor_output/time_index.csv
+# Python and test caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
 
-# Large generated cross-sectional panels (regenerate with cross_sectional_evaluate.py)
-quant_output/**/daily_panel.csv
-quant_output/**/train_panel.csv
-quant_output/**/test_panel.csv
+# Local environments and editor files
+.env
+.venv/
+.idea/
+.vscode/
 
-# Large row-level generated predictions (keep summary metrics/reports in Git)
-quant_output/**/predictions.csv
-quant_output/**/summary_predictions.csv
-quant_output/**/unique_oos_predictions.csv
-quant_output/**/validation_predictions.csv
+# Reproducible row-level model outputs; keep compact summary reports in Git
+quant_output/electricity_forecast/oos_predictions.csv
+quant_output/electricity_forecast/*/
+
+# Interrupted forecast downloads
+data/forecast_revisions/*.tmp
+
+# Large legacy artifacts retained only in Git history
+tensor_output/
+best_stgcn.pt
+*.npy
+*.npz
+*.pt

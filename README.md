@@ -1,177 +1,132 @@
-# 🌬️ EU Wind Energy → Stock Market Prediction (ST-GCN)
+# European Day-Ahead Electricity Price Forecasting
 
-A Spatio-Temporal Graph Convolutional Network that predicts renewable energy stock fluctuations using European wind farm meteorological data, electricity prices, and financial indicators.
+This project tests whether archived weather forecast levels and forecast revisions improve next-day European day-ahead electricity price forecasts beyond simple price-history baselines.
 
-## 🎯 Project Overview
+The current research target is electricity price, not stock return. Earlier ST-GCN and cross-sectional equity experiments are summarized in [`docs/research_history.md`](docs/research_history.md) and remain available in Git history.
 
-**Research Question:** Can spatiotemporal patterns in European wind energy production predict movements in renewable energy stocks?
+## Research Design
 
-**Approach:** Build a graph of 100 major European wind farms, capture hourly weather/power signals propagating across the network (modelling the westerly jet stream physics), and predict 24-hour-ahead changes in a portfolio of wind energy stocks (Ørsted, Vestas, Iberdrola, EDPR).
+- **Target:** next-delivery-day country-average day-ahead electricity price in EUR/MWh.
+- **Universe:** Belgium, Germany, Denmark, France, Ireland, the Netherlands, and Norway.
+- **Decision time:** 09:00 UTC on the calendar day before delivery.
+- **Weather source:** archived Open-Meteo Previous Runs forecasts.
+- **Forecast level:** the day-2 forecast for each delivery hour.
+- **Forecast revision:** day-2 forecast minus day-3 forecast for the same delivery hour.
+- **Weather variables:** 100 m wind speed, shortwave radiation, and 2 m temperature.
+- **Leakage control:** every forecast has an explicit availability timestamp that must precede the decision timestamp; all imputers, winsorization thresholds, scalers, and model parameters are fit inside each training fold.
+- **Validation:** three expanding-window folds covering July through December 2024, with a separate validation month before each two-month test window.
+- **Uncertainty:** seven-day moving-block bootstrap and Newey-West t-statistics on daily loss differences.
+- **Target completeness:** a country-day is evaluated only when the UTC day contains at least 24 observed hourly prices; the incomplete 2024-12-31 endpoint is excluded.
 
-**Key Insight:** The model learns that weather fluctuations accumulate as "latent energy" during market-closed hours (`is_market_open=0`), then manifest as price movements at market open — bridging the 24/7 physical world with the 5/7 financial world.
+The day-2 versus day-3 construction is conservative. It avoids relying on a forecast update that may not have been published by the 09:00 UTC decision time.
 
-## 🏗️ Architecture
+## Main Conclusions
 
-```
-Input: (B, 168, 100, 16) — 7 days × 100 nodes × 16 features
-         │
-    Input Projection (16 → 64)
-         │
-    ┌────┴────┐
-    │ ST-Conv Block ×3 │
-    │  ├─ Temporal GLU (Gated Linear Unit)
-    │  ├─ Sparse Graph Conv (Ã = D⁻½AD⁻½)
-    │  ├─ Temporal GLU
-    │  └─ BatchNorm + Residual + Dropout
-    └────┬────┘
-         │
-    Attention Pooling (100 nodes → weighted sum)
-         │
-    Temporal Pool → MLP Readout
-         │
-Output: (B, 3) — ΔPC1, ΔPC2, ΔPC3 predictions
-```
+1. **Weather forecasts add useful information beyond price history.** Full Ridge reduces pooled OOS MAE by 4.83 EUR/MWh (21.32%) versus persistence. The seven-day block-bootstrap 95% interval is 3.09 to 7.04 EUR/MWh, and the Newey-West t-statistic is 5.25.
+2. **Forecast levels matter much more than forecast revisions.** Adding all weather features to price-only Ridge improves MAE by 2.91 EUR/MWh (95% interval: 1.76 to 3.97). Adding revisions alone to price history improves MAE by only 0.14 EUR/MWh (95% interval: 0.02 to 0.26), while a revision-only model performs poorly.
+3. **Model complexity is not decisively rewarded.** HistGradient has the best pooled MAE, beating Full Ridge by 0.52 EUR/MWh, but the direct bootstrap interval is -0.40 to 1.45 and includes zero. Ridge is therefore the primary parsimonious specification; HistGradient is the best point-estimate challenger, not a statistically proven winner.
+4. **The result is promising but narrow.** Full Ridge beats persistence in every OOS fold, but not in every country, and the test period covers only July through December 2024. The evidence supports a forecasting result, not a production trading or causal claim.
+5. **The largest remaining risks are data provenance and market definition.** The retained price file lacks a documented original provider and product-level definition. The target is a UTC country-day proxy, and each country is represented by one capacity-weighted weather centroid. These must be upgraded before making operational claims.
 
-## 📊 Feature Vector (16 dimensions per node per hour)
+## OOS Results
 
-| # | Feature | Scaling | Source |
-|---|---------|---------|--------|
-| 0-3 | SSR, T2M, U100, V100 | Global Z-score | ERA5 meteorological |
-| 4 | Electricity price | RobustScaler (per country) | Day-ahead markets |
-| 5-7 | Finance PC1-PC3 | Z-score (broadcast) | Stock PCA |
-| 8 | is_market_open | Binary (no scaling) | Trading calendar |
-| 9 | Capacity (MW) | log1p + Z-score | Static node metadata |
-| 10-11 | Latitude, Longitude | MinMax | Static node metadata |
-| 12-13 | sin/cos(hour) | Cyclical | Time encoding |
-| 14-15 | sin/cos(month) | Cyclical | Time encoding |
+The combined out-of-sample period contains 183 complete UTC days and 1,281 country-day observations.
 
-## 📁 Project Structure
+| Model | MAE | RMSE | R2 | MAE improvement vs persistence |
+|---|---:|---:|---:|---:|
+| HistGradient, full features | 17.30 | 27.96 | 0.604 | 23.62% |
+| Ridge, full features | 17.83 | 27.48 | 0.618 | 21.32% |
+| Ridge, price + revisions | 20.60 | 30.93 | 0.516 | 9.10% |
+| Ridge, price only | 20.74 | 31.00 | 0.514 | 8.47% |
+| Ridge, forecast levels only | 22.40 | 33.48 | 0.433 | 1.14% |
+| Persistence | 22.66 | 32.85 | 0.454 | 0.00% |
+| Ridge, revisions only | 26.82 | 38.98 | 0.231 | -18.39% |
 
-```
-├── README.md                    # This file
-├── spatial_clustering.py        # DBSCAN spatial clustering (haversine)
-├── finance_pca.py               # PCA on wind energy stocks
-├── build_adjacency.py           # Sparse adjacency matrix construction
-├── build_tensor.py              # Feature tensor assembly & DataLoader
-├── stgcn_model.py               # ST-GCN model + Trainer + utilities
-├── train_stgcn.py               # Training script (full pipeline)
-├── test_integration.py          # Integration test (real data verification)
-├── NodeLoader.py                # Original node data loader
-│
-├── asset_nodes.csv              # 865 wind farm nodes (raw)
-├── processed_nodes.csv          # Top-100 nodes + cluster IDs
-├── adjacency_matrix.npz         # Sparse CSR adjacency (scipy)
-├── adjacency_matrix.pt          # Sparse COO adjacency (PyTorch)
-│
-├── data/
-│   ├── Finance20192024/
-│   │   └── raw_finance.csv      # Daily stock prices (2019-2024)
-│   ├── price_top100_*.csv       # Hourly electricity prices
-│   ├── ssr_top100_*.csv         # Surface solar radiation
-│   ├── t2m_top100_*.csv         # 2m temperature
-│   ├── u100_top100_*.csv        # 100m U-wind component
-│   └── v100_top100_*.csv        # 100m V-wind component
-│
-├── tensor_output/
-│   ├── feature_tensor.npy       # (52585, 100, 16) memmap — 321 MB
-│   ├── target_vector.npy        # ΔPC1 at +24h
-│   ├── scaler_params.npz        # All scaler parameters
-│   ├── tensor_meta.json         # Shape & split metadata
-│   └── training_tips.txt        # Training recommendations
-│
-├── cluster_map.png              # Spatial clustering visualisation
-├── adjacency_heatmap.png        # Adjacency matrix sparsity pattern
-└── finance_pca_scree.png        # PCA explained variance plot
-```
+Detailed tables are stored in [`quant_output/electricity_forecast`](quant_output/electricity_forecast).
+These figures were generated in `raincalib-gpu` with Python 3.12.13,
+NumPy 2.4.4, pandas 3.0.3, and scikit-learn 1.9.0.
 
-## 🔬 Pipeline Steps (built 2025-05-01)
+## Run
 
-### Step 1: Spatial Clustering
-- **Algorithm:** DBSCAN with haversine distance (eps=65 km, min_samples=3)
-- **Result:** 100 top-capacity wind farms → 39 physical clusters
-- **Purpose:** Optimise graph structure; capture mesoscale weather system coherence
+The verified local environment for all experiments is `raincalib-gpu`. The
+`environment.yml` file remains the portable dependency specification for a
+fresh machine.
 
-### Step 2: Finance PCA
-- **Input:** 4 wind energy stocks (ORSTED, VWS, IBE, EDPR), daily 2019–2024
-- **Result:** PC1 explains **62.17%**, top-3 explain **90.38%** (>85% ✓)
-- **Interpretation:** PC1 = sector momentum; PC2 = North/South Europe divergence
-
-### Step 3: Adjacency Matrix
-- **Intra-cluster:** Weight = 1.0 (full connection within physical clusters)
-- **Inter-cluster:** Weight = exp(−d/σ) if d < 150 km
-- **Self-loops:** 1.0
-- **Normalisation:** Symmetric Laplacian (D⁻½AD⁻½)
-- **Density:** 8.48% (sparse enough for efficient computation)
-
-### Step 4: Feature Tensor Assembly
-- **Shape:** (52,585 hours, 100 nodes, 16 features)
-- **Split:** Train 2019–2023 | Val 2024-H1 | Test 2024-H2
-- **Zero leakage:** Scalers fit on train only; chronological split; no cross-time shuffle
-- **Target:** ΔPC1 = PC1(t+24) − PC1(t) (first-differenced for stationarity)
-
-### Step 5: ST-GCN Model
-- **Parameters:** ~199K (lightweight)
-- **VRAM estimate:** ~415 MB per batch (fits easily in 16 GB)
-- **Loss:** Hybrid MSE + 0.1×L1 (robust to financial fat tails)
-- **Optimiser:** AdamW + Cosine warmup (5 epochs → 100 epochs)
-
-## 🚀 Quick Start
+To create a standalone environment elsewhere:
 
 ```bash
-# 1. Install dependencies
-pip install torch numpy pandas scikit-learn scipy matplotlib
-
-# 2. Generate feature tensor (run once, ~2 min)
-python build_tensor.py
-
-# 3. Train on GPU
-python train_stgcn.py --device cuda --epochs 100 --batch_size 16
-
-# 4. With ClusterGCN (if VRAM limited)
-python train_stgcn.py --device cuda --cluster_gcn --n_sample_clusters 3
-
-# 5. Dry run (2 epochs, verify setup)
-python train_stgcn.py --device cuda --dry_run
+conda env create -f environment.yml
 ```
 
-## 🧪 Validation
+Fetch the archived forecasts:
 
 ```bash
-# Smoke test (random data, verifies architecture)
-python -c "from stgcn_model import smoke_test; smoke_test()"
-
-# Integration test (real data, verifies full pipeline)
-python test_integration.py
+conda run -n raincalib-gpu python scripts/fetch_forecast_revisions.py
 ```
 
-## 📈 Baseline & Success Criteria
+Run the walk-forward evaluation and bootstrap report:
 
-| Metric | Value |
-|--------|-------|
-| Naive baseline (predict 0) | MSE = Var(ΔPC1) |
-| Success threshold | Beat naive by ≥ 5% |
-| Evaluation | Test set (2024-H2) only |
+```bash
+conda run -n raincalib-gpu python scripts/run_electricity_forecast.py
+```
 
-## ⚡ Hardware Requirements
+Run the tests:
 
-- **Minimum:** Any GPU with 4+ GB VRAM (with ClusterGCN)
-- **Recommended:** RTX 5070 Ti (16 GB) — batch_size=16, full graph
-- **CPU fallback:** Works but very slow (use `--dry_run` for testing)
+```bash
+conda run -n raincalib-gpu python -m pytest -q
+```
 
-## 📝 Key Design Decisions
+## Project Structure
 
-1. **Global Z-score for weather** — Preserves geographic intensity differences (Scotland wind > Germany wind)
-2. **RobustScaler for electricity prices** — Handles 2022 energy crisis spikes (500+ €/MWh)
-3. **is_market_open flag** — Lets the model learn accumulation during closed markets
-4. **Haversine distance** — Accurate great-circle distance, not Euclidean
-5. **DBSCAN clustering** — Identifies non-spherical coastal/mountain wind farm clusters
-6. **Attention pooling** — Learns which nodes matter most for financial prediction
-7. **Memmap tensors** — 321 MB tensor doesn't need to fit in RAM
+```text
+EU_Electric_Atm_ML/
+|-- README.md
+|-- environment.yml
+|-- data/
+|   |-- processed_nodes.csv
+|   |-- price_top100_2019-01-01_2024-12-31.csv
+|   `-- forecast_revisions/
+|       |-- country_hourly.csv
+|       `-- metadata.json
+|-- docs/
+|   |-- interview_questions.md
+|   |-- interview_reference_answers.md
+|   `-- research_history.md
+|-- scripts/
+|   |-- fetch_forecast_revisions.py
+|   `-- run_electricity_forecast.py
+|-- src/
+|   `-- electricity_forecast/
+|       |-- __init__.py
+|       |-- data.py
+|       |-- evaluate.py
+|       `-- forecast_api.py
+|-- tests/
+|   `-- test_electricity_forecast.py
+`-- quant_output/
+    `-- electricity_forecast/
+        |-- summary_metrics.csv
+        |-- fold_metrics.csv
+        |-- country_metrics.csv
+        |-- bootstrap_mae_improvement.csv
+        |-- feature_increment_bootstrap.csv
+        `-- final_report.json
+```
 
-## 📄 License
+## Data Sources
 
-Research project — academic use.
+- Electricity price and node metadata are the retained inputs from the original repository dataset.
+- Archived weather forecasts are downloaded through the [Open-Meteo Previous Runs API](https://open-meteo.com/en/docs/previous-runs-api).
+- Open-Meteo's [Historical Forecast API](https://open-meteo.com/en/docs/historical-forecast-api) documents the broader archived forecast product.
 
----
+## Limitations
 
-*Built with ST-GCN, PyTorch, scikit-learn, and ERA5 reanalysis data.*
+- The archived forecast experiment covers only March through December 2024, so the model has not been tested across multiple energy-market regimes.
+- Country-level weather is represented by capacity-weighted wind-farm coordinates, not a production-grade numerical weather grid or generation forecast.
+- The target is an average daily price, not an hourly auction curve, spread, or executable trading PnL.
+- The retained electricity-price file has no provider URL or product-level provenance in the repository history, so it is treated as an unverified country-level proxy rather than an official exchange index.
+- UTC calendar-day aggregation does not yet reproduce each bidding zone's local delivery day or daylight-saving convention.
+- Publication timestamps are represented by a conservative lead-day rule rather than provider issue-time records for every forecast run.
+- Norway behaves differently from the continental markets and needs country-specific diagnostics or model segmentation.
+
+This is a research pipeline, not investment advice.

@@ -1,0 +1,131 @@
+{
+  "source": "Open-Meteo Previous Runs API",
+  "endpoint": "https://previous-runs-api.open-meteo.com/v1/forecast",
+  "start_date": "2024-03-01",
+  "end_date": "2024-12-31",
+  "lead_days": [
+    2,
+    3
+  ],
+  "revision_definition": "previous_day2 minus previous_day3 for the same valid hour",
+  "availability_rule": "latest day-2 valid-hour forecast is available by target_date-2 23:00 UTC",
+  "countries": {
+    "BEL": {
+      "latitude": 51.47636354455945,
+      "longitude": 3.0151073466296388,
+      "capacity_mw": 792.2,
+      "node_count": 5,
+      "non_null_hours": {
+        "wind_speed_100m_previous_day2": 7344,
+        "wind_speed_100m_previous_day3": 7344,
+        "shortwave_radiation_previous_day2": 7344,
+        "shortwave_radiation_previous_day3": 7344,
+        "temperature_2m_previous_day2": 7344,
+        "temperature_2m_previous_day3": 7344
+      },
+      "request_url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=51.47636&longitude=3.01511&start_date=2024-03-01&end_date=2024-12-31&hourly=wind_speed_100m_previous_day2%2Cwind_speed_100m_previous_day3%2Cshortwave_radiation_previous_day2%2Cshortwave_radiation_previous_day3%2Ctemperature_2m_previous_day2%2Ctemperature_2m_previous_day3&timezone=UTC&wind_speed_unit=ms"
+    },
+    "DEU": {
+      "latitude": 54.0232440665237,
+      "longitude": 8.918057877642624,
+      "capacity_mw": 5027.862,
+      "node_count": 24,
+      "non_null_hours": {
+        "wind_speed_100m_previous_day2": 7344,
+        "wind_speed_100m_previous_day3": 7344,
+        "shortwave_radiation_previous_day2": 7344,
+        "shortwave_radiation_previous_day3": 7344,
+        "temperature_2m_previous_day2": 7344,
+        "temperature_2m_previous_day3": 7344
+      },
+      "request_url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=54.02324&longitude=8.91806&start_date=2024-03-01&end_date=2024-12-31&hourly=wind_speed_100m_previous_day2%2Cwind_speed_100m_previous_day3%2Cshortwave_radiation_previous_day2%2Cshortwave_radiation_previous_day3%2Ctemperature_2m_previous_day2%2Ctemperature_2m_previous_day3&timezone=UTC&wind_speed_unit=ms"
+    },
+    "DNK": {
+      "latitude": 55.67374839083312,
+      "longitude": 10.156520153884339,
+      "capacity_mw": 1208.7,
+      "node_count": 6,
+      "non_null_hours": {
+        "wind_speed_100m_previous_day2": 7182,
+        "wind_speed_100m_previous_day3": 7152,
+        "shortwave_radiation_previous_day2": 7183,
+        "shortwave_radiation_previous_day3": 7153,
+        "temperature_2m_previous_day2": 7344,
+        "temperature_2m_previous_day3": 7344
+      },
+      "request_url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=55.67375&longitude=10.15652&start_date=2024-03-01&end_date=2024-12-31&hourly=wind_speed_100m_previous_day2%2Cwind_speed_100m_previous_day3%2Cshortwave_radiation_previous_day2%2Cshortwave_radiation_previous_day3%2Ctemperature_2m_previous_day2%2Ctemperature_2m_previous_day3&timezone=UTC&wind_speed_unit=ms"
+    },
+    "FRA": {
+      "latitude": 47.466714580268565,
+      "longitude": 3.0779754106604873,
+      "capacity_mw": 1063.835,
+      "node_count": 23,
+      "non_null_hours": {
+        "wind_speed_100m_previous_day2": 7344,
+        "wind_speed_100m_previous_day3": 7344,
+        "shortwave_radiation_previous_day2": 7344,
+        "shortwave_radiation_previous_day3": 7344,
+        "temperature_2m_previous_day2": 7344,
+        "temperature_2m_previous_day3": 7344
+      },
+      "request_url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=47.46671&longitude=3.07798&start_date=2024-03-01&end_date=2024-12-31&hourly=wind_speed_100m_previous_day2%2Cwind_speed_100m_previous_day3%2Cshortwave_radiation_previous_day2%2Cshortwave_radiation_previous_day3%2Ctemperature_2m_previous_day2%2Ctemperature_2m_previous_day3&timezone=UTC&wind_speed_unit=ms"
+    },
+    "IRL": {
+      "latitude": 52.84296215453783,
+      "longitude": -8.104371419755807,
+      "capacity_mw": 1134.3500000000001,
+      "node_count": 23,
+      "non_null_hours": {
+        "wind_speed_100m_previous_day2": 7182,
+        "wind_speed_100m_previous_day3": 7152,
+        "shortwave_radiation_previous_day2": 7183,
+        "shortwave_radiation_previous_day3": 7153,
+        "temperature_2m_previous_day2": 7344,
+        "temperature_2m_previous_day3": 7344
+      },
+      "request_url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=52.84296&longitude=-8.10437&start_date=2024-03-01&end_date=2024-12-31&hourly=wind_speed_100m_previous_day2%2Cwind_speed_100m_previous_day3%2Cshortwave_radiation_previous_day2%2Cshortwave_radiation_previous_day3%2Ctemperature_2m_previous_day2%2Ctemperature_2m_previous_day3&timezone=UTC&wind_speed_unit=ms"
+    },
+    "NLD": {
+      "latitude": 51.9432842503023,
+      "longitude": -2.6676934038694085,
+      "capacity_mw": 1654.0,
+      "node_count": 9,
+      "non_null_hours": {
+        "wind_speed_100m_previous_day2": 7182,
+        "wind_speed_100m_previous_day3": 7152,
+        "shortwave_radiation_previous_day2": 7183,
+        "shortwave_radiation_previous_day3": 7153,
+        "temperature_2m_previous_day2": 7344,
+        "temperature_2m_previous_day3": 7344
+      },
+      "request_url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=51.94328&longitude=-2.66769&start_date=2024-03-01&end_date=2024-12-31&hourly=wind_speed_100m_previous_day2%2Cwind_speed_100m_previous_day3%2Cshortwave_radiation_previous_day2%2Cshortwave_radiation_previous_day3%2Ctemperature_2m_previous_day2%2Ctemperature_2m_previous_day3&timezone=UTC&wind_speed_unit=ms"
+    },
+    "NOR": {
+      "latitude": 64.93422279293739,
+      "longitude": 12.645996950240772,
+      "capacity_mw": 623.0,
+      "node_count": 10,
+      "non_null_hours": {
+        "wind_speed_100m_previous_day2": 7182,
+        "wind_speed_100m_previous_day3": 7152,
+        "shortwave_radiation_previous_day2": 7183,
+        "shortwave_radiation_previous_day3": 7153,
+        "temperature_2m_previous_day2": 7344,
+        "temperature_2m_previous_day3": 7344
+      },
+      "request_url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=64.93422&longitude=12.646&start_date=2024-03-01&end_date=2024-12-31&hourly=wind_speed_100m_previous_day2%2Cwind_speed_100m_previous_day3%2Cshortwave_radiation_previous_day2%2Cshortwave_radiation_previous_day3%2Ctemperature_2m_previous_day2%2Ctemperature_2m_previous_day3&timezone=UTC&wind_speed_unit=ms"
+    }
+  },
+  "hourly_units": {
+    "time": "iso8601",
+    "wind_speed_100m_previous_day2": "m/s",
+    "wind_speed_100m_previous_day3": "m/s",
+    "shortwave_radiation_previous_day2": "W/m\u00b2",
+    "shortwave_radiation_previous_day3": "W/m\u00b2",
+    "temperature_2m_previous_day2": "\u00b0C",
+    "temperature_2m_previous_day3": "\u00b0C"
+  },
+  "rows": 51408,
+  "usable_start": "2024-03-01 00:00:00+00:00",
+  "usable_end": "2024-12-31 23:00:00+00:00"
+}
